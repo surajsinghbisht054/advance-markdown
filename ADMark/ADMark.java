@@ -295,8 +295,8 @@ class ADMarkProcessor{
 public class ADMark{
 
 /* Global Variable Configuration */
-	private static final String input_file = "./tmp/input_markdown.md";  // Input File Path
-	private static final String output_file = "./tmp/output_html.html";  // Output File Path
+	private static final String input_file = "./input_markdown.md";  // Input File Path
+	private static final String output_file = "./output_html.html";  // Output File Path
 	private String input_data; // Input Markdown Text
 	private String output_data; // Output HTML Source Code
 

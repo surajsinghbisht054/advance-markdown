@@ -156,6 +156,14 @@ User, can also add extra properties to HTML element in MarkDown. For Example
 ---
 ## Still Under Progress.
 
+Features Going To Add
+- Link, Image, Video Syntax
+- Italic, Bold, Stike, Indent Code.
+- Other Markdown Syntax Support
+- Diagram Support
+- Syntax Highlighting Support
+- BootStrap Support
+- Much More
 
 ---
 ### Author
