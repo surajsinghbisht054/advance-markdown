@@ -1,35 +1,67 @@
 
-Just Checking
 /* 
 ========================================
 	Heading Section 
 ========================================
 */
 
-# h1 Heading 
-## h2 Heading {sdfasdf sadfsdf}
-### h3 Heading
-#### h4 Heading {#sdfs }
-##### h5 Heading
-###### h6 Heading {#}
 
-	
+# h1 Heading 
+## h2 Heading {#this_is_id .classOne .classTwo font="Arial Size 12px"}
+### h3 Heading {#anotherId}
+#### h4 Heading {.JustClass }
+##### h5 *_Heading-* { }
+###### h6 Heading 
 
 ## Simple Heading Followed By Horizontal Line
 ===
 
+
 ### Heading Followed By Line Break
--------------
-/* Again Line break*/
 -
+
+/* 
+
+Line Break Example 
+
+*/
+
 -
--
--
--
--
--
--
--
+-{#this_is_id .classOne .classTwo font="Arial Size 12px"}
+--
+--- {#this_is_id}
+
+
+/* 
+
+Again Line break
+
+*/
+=
+={#this_is_id .classOne .classTwo font="Arial Size 12px"}
+==
+=== {#this_is_id}
+
+
+
+/*
+
+Code Example
+
+*/
+```
+Sample text here...
+```
+
+Syntax highlighting
+
+``` #this_is_id .This_is_Class .Another_Class backgroud="black"
+var foo = function (bar) {
+return bar++;
+};
+
+console.log(foo(5));
+```
 
 
 
@@ -37,20 +69,6 @@ Just Checking
 
 
 Block code "fences"
-
-```
-Sample text here...
-```
-
-Syntax highlighting
-
-``` js
-var foo = function (bar) {
-return bar++;
-};
-
-console.log(foo(5));
-```
 
 
 Indented code

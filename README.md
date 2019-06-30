@@ -139,7 +139,7 @@ User, can also add extra properties to HTML element in MarkDown. For Example
 #### Property Usages Example
 - `#this_for_id` Use this to add ID Element.
 - `.this_for_class` Use this to add Class Elements. 
-- `..... HERE_TYPE_YOUR_HTML_PROPERTY LIKE size="20px" style="font-family: Arial, bold;" ......` Easily, Can Add HTML Element Directly.
+- `size="20px" style="font-family: Arial, bold;" ` Easily, Can Add HTML Element Directly.
 
 #### Full Working Example
 - `### this is a heading {#exampleid .heading .working}` Heading Property.

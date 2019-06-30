@@ -25,6 +25,138 @@ package ADMark;
 import java.lang.System;
 import java.io.*;
 import java.util.regex.*;
+import java.util.*;
+import java.util.Collections;
+
+
+
+
+
+
+
+/* Abstract Class To Handle HTML Objects */
+
+abstract class HTMLObject{
+    
+    protected String tag;
+    protected String property[];
+    protected String content[];
+    protected String html;
+    protected String markdown;
+    
+    public boolean debug = true;
+    
+    
+    /* Reset */
+    public void reset(){
+        tag = null;
+        property = null;
+        content = null;
+        html = null;
+        markdown = null;
+    }
+    
+    
+    /* Markdown */
+    public void load_markdown(String _markdown, String _tag){
+        markdown = _markdown;
+        tag = _tag;
+        if(debug){
+            System.out.println(_markdown);
+            System.out.println(_tag);
+        }
+        
+    }
+    
+    /* Load HTML */
+    public void load_html(String _html){
+        html = _html;
+        if(debug){
+            System.out.println(_html);
+        }
+    }
+    
+    /* Get html */
+    public String get_html(){
+        parse_markdown();
+        return String.format("\n\n%s\n\n", html);
+    }
+    
+    /* get markdown */
+    public String get_markdown(){
+        return markdown;
+    }    
+    
+    /* get matcher */
+    protected Matcher getMatcher(String _exp, String _data){
+        return Pattern.compile(_exp).matcher(_data);
+    } 
+        
+    
+    /* Group Extractor */
+    protected void GroupDebug(String _exp, String _data){
+    
+        Matcher match = getMatcher(_exp, _data); //Heading Group 
+        System.out.println(String.format("Group : %d", match.groupCount()));
+        if(match.find()){
+            for(int i=0; i<=match.groupCount(); i++){
+                    System.out.println(String.format("Group %d %s",i, match.group(i)));
+            }
+        }
+    }
+    
+    /* property parser */
+    protected String[] property_parser(String data){        
+        
+        List<String> property = new ArrayList<String>();
+        List<String> property_class = new ArrayList<String>();
+        String property_id="";
+        
+        String[] args;
+        
+        if(debug){
+            System.out.println(String.format("[Property Parser ] %s ", data));
+        }
+        
+        if(data==null){
+            
+            args = new String[]{""};
+        
+        }else{
+            data = data.replaceAll("&quot;", "\"");
+            data = data.replaceAll("\\{|\\}", "");
+            for(String line: data.split("( (?=(#|\\.))| (?=(\\S+\\=\".+\")))")){
+                if(line.length()>0){
+                    
+                 
+                if(line.charAt(0)=='#'){
+                    // ID
+                    property_id = line.replace("#", "");
+                    
+                }else if(line.charAt(0)=='.'){
+                    line = line.replace(".", "");
+                    property_class.add(line);
+                
+                }else{
+                    
+                    property.add(line);
+                }   
+                    
+                }
+            }
+            property.add(String.format("id=\"%s\"", property_id));
+            property.add(String.format("class=\"%s\"", String.join(" ", property_class)));
+            Collections.reverse(property);
+            args = property.toArray(new String[property.size()]);
+            
+        }
+        return args;
+        
+    }
+    
+    /* to convert markdown to object */
+    protected abstract void parse_markdown();
+}
 
 
 
@@ -33,6 +165,130 @@ import java.util.regex.*;
 
 
 
+// Heading Processor 
+class HeadingProcessor 
+    
+    extends HTMLObject{
+    /*
+    private String tag;
+    private String property[];
+    private String content[];
+    private String html;
+    private String markdown;
+    */
+    HeadingProcessor(){
+        debug = false; 
+    }
+    public void parse_markdown(){
+        // GroupDebug("(#+) (.+?)(\\{.+\\})?\n", markdown);
+        Matcher match = getMatcher("(#+) (.+?)(\\{.+\\})?\n", markdown+"\n");
+        
+        if(match.find()){
+            
+            // Tag Parser
+            tag = String.format(tag, match.group(1).length());
+            
+            // Content Parser
+            content = new String[]{match.group(2)};
+            
+            // Property Parser 
+            property = property_parser(match.group(3));
+            
+            // Html Generator
+            html = String.format("<%s %s> %s </%s>", 
+                                 tag,
+                                 String.join(" ", property),
+                                 String.join(" ", content),
+                                 tag);
+        }   
+    }
+}
+
+
+
+
+
+
+
+/* Horizontal Line */
+
+class HorizontalLineProcessor
+    extends HTMLObject{
+    /*
+    private String tag;
+    private String property[];
+    private String content[];
+    private String html;
+    private String markdown;
+    */
+    
+    HorizontalLineProcessor(){
+        debug = false; 
+    }
+    
+    public void parse_markdown(){
+        // GroupDebug("(.*?)(\\{.+\\})?\n", markdown);
+        
+        Matcher match = getMatcher("(.*?)(\\{.+\\})?\n", markdown);
+        
+        if(match.find()){
+            
+            // Property Parser 
+            property = property_parser(match.group(2));
+            
+            // Html Generator
+            html = String.format("<%s %s />", 
+                                 tag,
+                                 String.join(" ", property)
+                                 );
+        } 
+        
+    }
+}
+    
+
+    
+/* Code Snippet Processor */
+
+class CodeProcessor
+    extends HTMLObject{
+    /*
+    private String tag;
+    private String property[];
+    private String content[];
+    private String html;
+    private String markdown;
+    */
+    
+    CodeProcessor(){
+        debug = false; 
+    }
+    
+    public void parse_markdown(){
+        //GroupDebug("(```)(.*?)\n([\\s\\S]+)(```)", markdown);
+        
+        Matcher match = getMatcher("(```)(.*?)\n([\\s\\S]+)(```)", markdown);
+        
+        if(match.find()){
+            
+            // Property Parser 
+            property = property_parser(match.group(2));
+            
+            // Content Parser
+            content = new String[]{match.group(3)};
+            
+            // Html Generator
+            html = String.format("<%s %s> %s </%s>", 
+                                 tag,
+                                 String.join(" ", property),
+                                 String.join(" ",content),
+                                 tag
+                                 );
+        } 
+        
+    }
+}
+    
 
 
 
@@ -80,11 +336,10 @@ class ADMarkProcessor{
     String output_html = "";
     
     /* 
-     Work Under Progress
-     
-    AMDHTMLObject converter = new AMDHTMLObject();
+     Still Work Under Progress
+    */ 
+    HTMLObject converter;
     
-    */
     
     
     /* Constructor */
@@ -179,7 +434,9 @@ class ADMarkProcessor{
         if(debug){
             System.out.println(String.format("<h2> %s </h2>", data));
         }
-        return String.format("<h2> %s </h2>", data);
+        converter = new HeadingProcessor();
+        converter.load_markdown(data, "h%d");
+        return converter.get_html();
     }
     
     
@@ -187,21 +444,28 @@ class ADMarkProcessor{
         if(debug){
             System.out.println(String.format("<br /> %s", data));
         }
-        return String.format("<br /> \n");
-        
+        // Line Break
+        converter = new HorizontalLineProcessor();
+        converter.load_markdown(data, "br");
+        return converter.get_html();
     }
     private String process_horizontalline(String data){
         if(debug){
             System.out.println(String.format("<hr /> %s", data));
         }
-        
-        return String.format("\n<hr /> \n");
+        // Horizontal Line
+        converter = new HorizontalLineProcessor();
+        converter.load_markdown(data, "hr");
+        return converter.get_html();
+     
     }
     private String process_codes(String data){
         if(debug){
             System.out.println(String.format("<code> %s </code>", data));
         }
-        return String.format("\n<code> %s </code>\n", data);
+		converter = new CodeProcessor();
+        converter.load_markdown(data, "pre");
+        return converter.get_html();
     }
     
     private String process_orderlist(String data){
@@ -240,8 +504,9 @@ class ADMarkProcessor{
     if(debug){
         System.out.println(String.format("<code> %s </code>", data));
         }
-        
-        return String.format("\n<code> %s </code>\n", data);
+       	converter = new CodeProcessor();
+        converter.load_markdown(data, "code");
+        return converter.get_html();
     }
     
     private String process_htmlcodes(String unsafe){
