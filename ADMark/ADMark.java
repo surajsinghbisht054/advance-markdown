@@ -290,6 +290,116 @@ class CodeProcessor
 }
     
 
+/* List Processor */
+
+class ListProcessor
+    extends HTMLObject{
+    /*
+    private String tag;
+    private String property[];
+    private String content[];
+    private String html;
+    private String markdown;
+    */
+    
+    ListProcessor(){
+        debug = false; 
+    }
+    
+    public void parse_markdown(){
+        int new_=0;
+        int last_=0;
+        int tab_=0;
+        List<String> list_ = new ArrayList<String>();
+        List<Boolean> unorderlist = new ArrayList<Boolean>(); // List Type
+        List<String> propertylist = new ArrayList<String>(); // Properties
+        List<String> contentlist = new ArrayList<String>(); // Content List
+        List<Integer> nodelist = new ArrayList<Integer>(); // Node Level
+        Deque<String> tags = new ArrayDeque<String>();
+        
+        Matcher match;
+    
+        for(String x: markdown.split("\n")){
+            x+= "\n";
+            match = getMatcher("(\\-|\\+|\\*|\\d)(.*?)(\\{.+\\})?\n", x);
+            if(match.find()){
+            
+                if(match.group(1).matches("\\d")){
+                    // System.out.println("OrderList");
+                    unorderlist.add(false);
+                }else{
+                    // System.out.println("UnOrderList");
+                    unorderlist.add(true);
+                }
+                nodelist.add(x.split("\\+|\\-|\\*|\\d")[0].length()/4);
+                contentlist.add(match.group(2));
+                propertylist.add(String.join(" ", property_parser(match.group(3))));
+            }
+        }
+        
+        for(int i=0; i<contentlist.size(); i++){
+            if(debug){
+            
+            System.out.println(String.format("[+] %dx %s - %s", 
+                nodelist.get(i), 
+                contentlist.get(i), 
+                propertylist.get(i))
+                );
+        
+            }
+
+            tab_ = nodelist.get(i); 
+            new_ = tab_;
+
+            if( new_ < last_ ){
+
+                // System.out.print("Parent | ");
+                list_.add(tags.pop());
+                list_.add(String.join("", Collections.nCopies(last_ - new_, "</li>\n")));
+                list_.add(String.format("<li %s > %s ", propertylist.get(i) ,contentlist.get(i)));
+                list_.add("</li>\n");
+
+            }else if( new_ > last_){
+
+
+                //System.out.print("Child  | ");
+                list_.remove(list_.size()-1);
+                
+                if(unorderlist.get(i)==true){
+                    list_.add(String.format("<ul %s >\n", propertylist.get(i)));
+                    tags.push("</ul>\n"); // Keep Record of Pushed Tag
+                
+                }else{
+                    list_.add(String.format("<ol %s >\n", propertylist.get(i)));
+                    tags.push("</ol>\n");
+                
+                }
+                
+                list_.add(String.format("<li> %s ", contentlist.get(i)));
+                list_.add("</li>\n");
+
+
+            }else{
+                // System.out.print("Node   | ");
+                list_.add(String.format("<li %s> %s ",propertylist.get(i), contentlist.get(i)));
+                list_.add("</li>\n");
+            }
+            //System.out.println(String.format("Tabs : %d | String : %s ",tab_,tmp[i]));
+            last_ = new_;
+        }
+        if(unorderlist.get(0)==true){
+            html = String.format("<ul>\n %s \n</ul>\n", String.join("\n", list_));
+        }else{
+            html = String.format("<ol>\n %s \n</ol>\n", String.join("\n", list_));
+        }
+        
+        
+    }
+ 
+}
+
+
+
 
 
 
@@ -303,10 +413,10 @@ class ADMarkProcessor{
     String HEADINGS_EXPRESSION  = "(#+ [^\n]+)";         // Heading
     
     
-    String LINEBREAK_EXPRESSION = "(-{1,}.+\n)";                   // Line Break
-    String HORI_LINE_EXPRESSION = "(={1,}.+\n)";                  // Horizontal Line
+    String LINEBREAK_EXPRESSION = "(-{2,}.*\n)";                   // Line Break
+    String HORI_LINE_EXPRESSION = "(={2,}.*\n)";                  // Horizontal Line
     
-    String UL_LIST_EXPRESSION = "((\\s*[\\-\\+\\*]+ .+\n)+)";    // Unordered List
+    String UL_LIST_EXPRESSION = "((\\s*[\\-\\+\\*\\d]+ .+\n)+)";    // Unordered List
     String OL_LIST_EXPRESSION = "((\\s*\\d+\\. .+\n)+)";        // Ordered List
     
     String CODES_EXPRESSION = "(```[\\s\\S]+?```)";               // Code Snippet
@@ -472,14 +582,19 @@ class ADMarkProcessor{
         if(debug){
             System.out.println(String.format("<ol> %s </ol>", data));
         }
-        return String.format("\n<ol> %s </ol>\n", data);
+        converter = new ListProcessor();
+        converter.load_markdown(data, "ol");
+        return converter.get_html();
     }
     
     private String process_unorderlist(String data){
     if(debug){
             System.out.println(String.format("<ul> %s </ul>", data));
         }
-        return String.format("\n<ul> %s </ul>\n", data);
+
+        converter = new ListProcessor();
+        converter.load_markdown(data, "ul");
+        return converter.get_html();
     }
     
     private String process_tablecontent(String data){

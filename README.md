@@ -31,18 +31,21 @@ Heading
 
 Line Break
 ---
-You can simply break line using `-`. use only `-` in new line. nothing else. number of `-` doesn't matter.
+You can simply break line using `--`. use only `--` in new line. nothing else. number of `-` needs to be more than one.
 ```
--
 --
----
+-- {#this_for_id}
+--- {#this_for_id .this_for_class}
 ```
 
 Horizontal Line
 ---
-use `=` to add Horizontal Line. use only `=` in new line. nothing else. number of `=` doesn't matter.
+use `==` to add Horizontal Line. use only `==` in new line. nothing else. number of `=` needs to be more than one
 ```
-=
+==
+== {#this_for_id}
+=== {#this_for_id .this_for_class}
+
 ```
 
 Ordered List

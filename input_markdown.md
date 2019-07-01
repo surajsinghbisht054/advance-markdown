@@ -1,7 +1,7 @@
 
 /* 
 ========================================
-	Heading Section 
+	      Heading Section 
 ========================================
 */
 
@@ -21,23 +21,23 @@
 -
 
 /* 
-
-Line Break Example 
-
+========================================
+       Line Break Example 
+========================================
 */
 
--
--{#this_is_id .classOne .classTwo font="Arial Size 12px"}
+--
+--{#this_is_id .classOne .classTwo font="Arial Size 12px"}
 --
 --- {#this_is_id}
 
 
 /* 
-
-Again Line break
-
+========================================
+		Horizontal Line break
+========================================
 */
-=
+==
 ={#this_is_id .classOne .classTwo font="Arial Size 12px"}
 ==
 === {#this_is_id}
@@ -45,10 +45,12 @@ Again Line break
 
 
 /*
-
-Code Example
-
+========================================
+		Code Example
+========================================
 */
+Simple 
+
 ```
 Sample text here...
 ```
@@ -64,6 +66,76 @@ console.log(foo(5));
 ```
 
 
+
+/*
+========================================
+	UnOrdered List Example
+========================================
+*/
+
++ Create a list by starting a line with `+`, `-`, or `*` {#this_is_for_table .thisIsfortable }
++ Sub-lists are made by indenting 2 spaces:{#this_is_for_row_One}
+    * Marker character change forces new list start: {#this_is_Again_For_Table}
+    * Ac tristique libero volutpat at {#this_is_for_row_One}
+        + Facilisis in pretium nisl aliquet {#this_is_for_table}
+        * Ac tristique libero volutpat at {#this_is_for_row_two}
+        * Ac tristique libero volutpat at {#this_is_for_row_three}
+    * Just checking again\n- Nulla volutpat aliquam velit
+    * Ac tristique libero volutpat at {#work }
+    * Ac tristique libero volutpat at {#work2 }
++ Very easy!
+
+
+/*
+========================================
+		Ordered
+========================================
+*/
+
+Simple ordered table
+
+5. foo{#works}
+1. bar
+1. works
+
+Nested Ordered Table
+
+1. starting line numbers does not matter
+    2. because browser assign its own numbers
+    3. so you just have to use any digit only to show that its a ordered list
+
+1. You can also set property {#like_this_one}
+	1. ...or keep all the numbers as `1.`{#or_this_one}
+
+/*
+========================================
+	Nested Ordered UnOrdered Lists
+========================================
+*/
+
+--
+--
+==
+==
+
++ Create a list by starting a line with `+`, `-`, or `*` {#this_is_for_table .thisIsfortable }
++ Sub-lists are made by indenting 2 spaces:{#this_is_for_row_One}
+    1 Marker character change forces new list start: {#this_is_Again_For_Table}
+    2 Ac tristique libero volutpat at {#this_is_for_row_One}
+        + Facilisis in pretium nisl aliquet {#this_is_for_table}
+        * Ac tristique libero volutpat at {#this_is_for_row_two}
+        * Ac tristique libero volutpat at {#this_is_for_row_three}
+    1 Just checking again\n- Nulla volutpat aliquam velit
+    1 Ac tristique libero volutpat at {#work }
+    1 Ac tristique libero volutpat at {#work2 }
++ Very easy!
+
+
+
+==
+==
+==
+==
 
 /*
 
