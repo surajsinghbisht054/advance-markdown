@@ -677,8 +677,8 @@ public class ADMark{
 /* Global Variable Configuration */
 	private static final String input_file = "./input_markdown.md";  // Input File Path
 	private static final String output_file = "./output_html.html";  // Output File Path
-	private String input_data; // Input Markdown Text
-	private String output_data; // Output HTML Source Code
+	public String input_data; // Input Markdown Text
+	public String output_data; // Output HTML Source Code
 
 	/* Constructor */
 	public ADMark(){
@@ -690,6 +690,17 @@ public class ADMark{
 		// Write Output
 		WriteFileData(output_file, output_data);
 	}
+
+	public String ADMark(String markdownContent){
+		input_data = markdownContent;
+		ADMarkProcessor obj = new ADMarkProcessor(input_data);
+		output_data = obj.getHTML(); 
+
+		// Write Output
+		WriteFileData(output_file, output_data);
+		return output_data;
+	}
+
 	/* Write Data To File */
 	private void WriteFileData(String path, String content){
 		try{
