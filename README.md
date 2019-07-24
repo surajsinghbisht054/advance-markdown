@@ -1,10 +1,12 @@
 # Advance Markdown Implementation
 Advance Markdown flavor with many extra features. I am going to add features like
-	- Git MarkDown Syntax flavor
-	- Pandoc Syntax Flavor 
-	- Bootstrap Framework support
-	- Many useful extra features
+- Git MarkDown Syntax flavor
+- Pandoc Syntax Flavor 
+- Bootstrap Framework support
+- Many useful extra features
 
+# How to test it?
+Simply, Clone Repo And Run `./run.sh`. This Script Automatic all other process. Fast And Easy.
 
 
 ## Syntax Usages Example
