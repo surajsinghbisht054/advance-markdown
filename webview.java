@@ -72,7 +72,7 @@ class webview extends JFrame implements ActionListener,DocumentListener
 
 		super("Markdown-Html Engine");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1800,1000);
+		setSize(1900,1000);
 
 		markdownEngine = new ADMark();
 		markdownContent= markdownEngine.input_data;
@@ -84,10 +84,16 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		scrollweb = new JScrollPane(web);
 		scrollmarkdown = new JScrollPane(markdown);
 
+		//config panels
+		//web.setPreferredSize(new Dimension(900,600));
+		markdown.setPreferredSize(new Dimension(50,200));
+		html.setPreferredSize(new Dimension(50,200));
+		markdown.setTabSize(1);
+		html.setTabSize(1);
 
 		//config
-		html.setFont(new Font("Courier", Font.BOLD,16));
-		markdown.setFont(new Font("Courier", Font.BOLD,16));
+		html.setFont(new Font("Courier", Font.BOLD,18));
+		markdown.setFont(new Font("Courier", Font.BOLD,18));
 		html.setMargin(new Insets(0,10,10,0));
 		markdown.setMargin(new Insets(0,10,10,0));
 
@@ -97,9 +103,10 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		
 
 		//setting layout of viewport panel to box layout 
-		viewportPanel.setLayout(new BoxLayout(viewportPanel, BoxLayout.LINE_AXIS));
-		viewportPanel.add(scrollweb);
-		viewportPanel.add(scrollmarkdown);	
+		viewportPanel.setLayout(new BorderLayout());
+		viewportPanel.add(scrollmarkdown,BorderLayout.WEST);
+		viewportPanel.add(scrollweb,BorderLayout.CENTER);
+
 		
 
 		
@@ -147,7 +154,7 @@ class webview extends JFrame implements ActionListener,DocumentListener
 				Platform.runLater(()->{
 					    webView = new WebView();
 					  
-					    web.setScene(new Scene(webView,800,947));
+					    web.setScene(new Scene(webView,900,947));
 					    webView.getEngine().loadContent(liveHtmlContent,"text/html");
 					    
 				    });
