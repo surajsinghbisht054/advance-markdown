@@ -47,11 +47,14 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		private JPanel viewportPanel = new JPanel();	//for storing content
 		
 		//creating buttons
-		private JButton htmlButton = new JButton("  HTML VIEW  ");
-		private JButton markdownButton = new JButton("  MARKDOWN VIEW  ");
+		private JButton switchWindowViewButton = new JButton(" Switch To HTML VIEW ");
 		
 
 		//creating componets of viewport panel
+		private JPanel header = new JPanel();
+		private JLabel markdownlabel = new JLabel("  MarkDown View  ");
+		private JLabel htmllabel = new JLabel("  Html View  ");
+		private JLabel webviewlabel = new JLabel("  Browser View  ");
 		private JTextArea markdown;		//for markdown coading 
 		private JTextArea html;			//for html coading
 		private JFXPanel web = new JFXPanel();					//for webview
@@ -67,6 +70,8 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		private String htmlContent;
 		
 		private String liveHtmlContent;
+
+		private int switchButtonStatus=1;
 
 	public webview()
 	{	
@@ -105,14 +110,35 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		markdown.setFont(new Font("Courier", Font.BOLD,18));
 		html.setMargin(new Insets(0,10,10,0));
 		markdown.setMargin(new Insets(0,10,10,0));
+		web.setBorder(new LineBorder(Color.BLACK,1,false));
 
 		//adding button on buttonpanel
-		buttonPanel.add(htmlButton);
-		buttonPanel.add(markdownButton);
-		
+		buttonPanel.add(switchWindowViewButton);
+				
+		//header panel for vieport panel
+		htmllabel.setFont(new Font("",Font.BOLD,26));
+		htmllabel.setForeground(Color.WHITE);
+		htmllabel.setBackground(Color.RED);
+		htmllabel.setBorder(new LineBorder(Color.RED,5,true));
+		webviewlabel.setFont(new Font("",Font.BOLD,26));
+		webviewlabel.setForeground(Color.WHITE);
+		webviewlabel.setBackground(Color.RED);
+		webviewlabel.setBorder(new LineBorder(Color.RED,5,true));
+		markdownlabel.setFont(new Font("",Font.BOLD,26));
+		markdownlabel.setForeground(Color.WHITE);		
+		markdownlabel.setBackground(Color.RED);
+		markdownlabel.setBorder(new LineBorder(Color.RED,5,true));
+		header.setBackground(Color.BLACK);
+		header.setLayout(new BorderLayout());
+		header.setBorder(new LineBorder(new Color(67,120,210),5,false));
+		header.add(markdownlabel,BorderLayout.WEST);
+		header.add(webviewlabel,BorderLayout.EAST);
+
+
 
 		//setting layout of viewport panel to box layout 
 		viewportPanel.setLayout(new BorderLayout());
+		viewportPanel.add(header,BorderLayout.NORTH);
 		viewportPanel.add(scrollmarkdown,BorderLayout.WEST);
 		viewportPanel.add(web,BorderLayout.CENTER);
 
@@ -133,31 +159,26 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		markdown.setText(markdownContent);
 		
 		//config button
-		htmlButton.setFont(new Font("",Font.BOLD,20));
-		htmlButton.setBorder(new LineBorder(Color.RED,3,true));
-		htmlButton.setBackground(new Color(0,85,130));
-		htmlButton.setForeground(Color.WHITE);
-		htmlButton.setPreferredSize(new Dimension(200,40));
-		markdownButton.setPreferredSize(new Dimension(250,40));
-		markdownButton.setFont(new Font("",Font.BOLD,20));
-		markdownButton.setBorder(new LineBorder(Color.RED,3,true));
-		markdownButton.setBackground(new Color(0,85,130));
-		markdownButton.setForeground(Color.WHITE);
+		switchWindowViewButton.setForeground(Color.WHITE);
+		switchWindowViewButton.setBackground(Color.BLACK);
+		switchWindowViewButton.setPreferredSize(new Dimension(400,40));
+		switchWindowViewButton.setFont(new Font("",Font.BOLD,23));
+		switchWindowViewButton.setBorder(new LineBorder(Color.RED,3,true));
 
 		//adding document listener
 		html.getDocument().addDocumentListener(this);
 		markdown.getDocument().addDocumentListener(this);
 
+
 		
 		
 		//adding button listener
-		markdownButton.addActionListener(this);
-		htmlButton.addActionListener(this);
+		switchWindowViewButton.addActionListener(this);
 		
 		//config panels
-		buttonPanel.setBackground(new Color(31, 35, 64));
+		buttonPanel.setBackground(Color.BLACK);
 		buttonPanel.setBorder(new LineBorder(new Color(67,120,210),5,false));
-		viewportPanel.setBorder(new LineBorder(new Color(67,120,210),10,false));
+		viewportPanel.setBorder(new LineBorder(new Color(67,120,210),5,false));
 
 		//adding component to main frame
 		add(buttonPanel,BorderLayout.NORTH);
@@ -227,55 +248,80 @@ class webview extends JFrame implements ActionListener,DocumentListener
 	//handling action on button
 	public void actionPerformed(ActionEvent e)
 		{
-			if(e.getSource()==markdownButton)
+			
+			if(e.getSource() == switchWindowViewButton)
 			{
-				
-				System.out.println("markdown view");
+				if(switchButtonStatus == 0)
+				{
+					System.out.println("markdown view");
 
-				liveHtmlContent=html.getText();
-				
-				Platform.runLater(()->{
-				    webView = new WebView();
-				  
-				    web.setScene(new Scene(webView));
-				    webView.getEngine().loadContent(liveHtmlContent,"text/html");
-				    
-			    });
-				
-				viewportPanel.remove(scrollhtml);
-				viewportPanel.remove(web);
-				viewportPanel.add(scrollmarkdown,BorderLayout.WEST);
-				viewportPanel.add(web,BorderLayout.CENTER);
-				
-				this.revalidate();
-				this.repaint();
-				
-			}
+					//changing status of button and text
+					switchButtonStatus = 1;
+					switchWindowViewButton.setText(" Switch To HTML VIEW ");
 
-			if(e.getSource() == htmlButton)
-			{	
-				System.out.println("html view");
 
-				liveHtmlContent=html.getText();
-								
-				Platform.runLater(()->{
-				    webView = new WebView();
-				  
-				    web.setScene(new Scene(webView));
-				    webView.getEngine().loadContent(liveHtmlContent,"text/html");
-			    });
-		
-				viewportPanel.remove(scrollmarkdown);
-				viewportPanel.remove(web);
-				viewportPanel.add(scrollhtml,BorderLayout.WEST);
-				viewportPanel.add(web,BorderLayout.CENTER);
+
+					liveHtmlContent=html.getText();
 					
-				this.revalidate();
-				this.repaint();
+					Platform.runLater(()->{
+					    webView = new WebView();
+					  
+					    web.setScene(new Scene(webView));
+					    webView.getEngine().loadContent(liveHtmlContent,"text/html");
+					    
+				    });
+					
+					viewportPanel.remove(scrollhtml);
+					viewportPanel.remove(web);
+					viewportPanel.remove(header);
+					header.remove(htmllabel);
+					header.remove(webviewlabel);
 
-				
+					header.add(markdownlabel,BorderLayout.WEST);
+					header.add(webviewlabel,BorderLayout.EAST);
+					viewportPanel.add(header,BorderLayout.NORTH);
+					viewportPanel.add(scrollmarkdown,BorderLayout.WEST);
+					viewportPanel.add(web,BorderLayout.CENTER);
+					
+					this.revalidate();
+					this.repaint();
+
+
+				}
+				else if(switchButtonStatus == 1)
+				{
+					System.out.println("html view");
+
+					//changing status of button and text
+					switchButtonStatus = 0;
+					switchWindowViewButton.setText(" Switch To MARKDOWN VIEW ");
+
+					liveHtmlContent=html.getText();
+									
+					Platform.runLater(()->{
+					    webView = new WebView();
+					  
+					    web.setScene(new Scene(webView));
+					    webView.getEngine().loadContent(liveHtmlContent,"text/html");
+				    });
+			
+					viewportPanel.remove(scrollmarkdown);
+					viewportPanel.remove(web);
+					viewportPanel.remove(header);
+					header.remove(markdownlabel);
+					header.remove(webviewlabel);
+
+					header.add(htmllabel,BorderLayout.WEST);
+					header.add(webviewlabel,BorderLayout.EAST);
+					viewportPanel.add(header,BorderLayout.NORTH);
+					viewportPanel.add(scrollhtml,BorderLayout.WEST);
+					viewportPanel.add(web,BorderLayout.CENTER);
+						
+					this.revalidate();
+					this.repaint();
+
+				}
 			}
-
 			
 		}
 
