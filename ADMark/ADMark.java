@@ -29,22 +29,37 @@ import java.util.*;
 import java.util.Collections;
 
 
+/*
+
+    Tag Conversion HTML Processing Class Implementation CheckList
+
+BaseClass ------------------------ Done
+HeadingProcessor ----------------- Done
+HorizontalLineProcessor ---------  Done
+CodeProcessor -------------------- Done
+ListProcessor -------------------- Done
+BlockQuoteProcessor -------------- Done
+
+
+*/
 
 
 
 
-
-/* Abstract Class To Handle HTML Objects */
+/* 
+    Abstract Class To Handle Common Functionality To Convert Markdown into HTML tags 
+    
+*/
 
 abstract class HTMLObject{
     
-    protected String tag;
-    protected String property[];
-    protected String content[];
-    protected String html;
-    protected String markdown;
+    protected String tag;         // To Store HTML tag variable
+    protected String property[];  // To Store CSS and Other HTML Properties
+    protected String content[];   // To Store Content
+    protected String html;        // Output HTML Tag Variable
+    protected String markdown;    // Input Markdown 
     
-    public boolean debug = true;
+    public boolean debug = true;   // Debug Trigger
     
     
     /* Reset */
@@ -310,15 +325,18 @@ class ListProcessor
         int new_=0;
         int last_=0;
         int tab_=0;
-        List<String> list_ = new ArrayList<String>();
+        
+        List<String> list_ = new ArrayList<String>(); // To Collect HTML Tags Set 
         List<Boolean> unorderlist = new ArrayList<Boolean>(); // List Type
         List<String> propertylist = new ArrayList<String>(); // Properties
         List<String> contentlist = new ArrayList<String>(); // Content List
         List<Integer> nodelist = new ArrayList<Integer>(); // Node Level
-        Deque<String> tags = new ArrayDeque<String>();
+        Deque<String> tags = new ArrayDeque<String>();   // To Close ALL Opened Tags In Correct Order
         
         Matcher match;
-    
+        /*
+        Parse All List Syntax and Store it According To Planned Structure.
+        */
         for(String x: markdown.split("\n")){
             x+= "\n";
             match = getMatcher("(\\-|\\+|\\*|\\d)(.*?)(\\{.+\\})?\n", x);
@@ -337,6 +355,9 @@ class ListProcessor
             }
         }
         
+        /*
+        Generate Tag
+        */
         for(int i=0; i<contentlist.size(); i++){
             if(debug){
             
@@ -387,6 +408,12 @@ class ListProcessor
             //System.out.println(String.format("Tabs : %d | String : %s ",tab_,tmp[i]));
             last_ = new_;
         }
+         
+        /* Close if Any Tag is Open */
+        while(!tags.isEmpty()){
+            list_.add(tags.pop());
+            
+        }
         if(unorderlist.get(0)==true){
             html = String.format("<ul>\n %s \n</ul>\n", String.join("\n", list_));
         }else{
@@ -399,6 +426,112 @@ class ListProcessor
 }
 
 
+
+
+/* BlockQuote Processor */
+
+class BlockQuoteProcessor
+    extends HTMLObject{
+    /*
+    private String tag;
+    private String property[];
+    private String content[];
+    private String html;
+    private String markdown;
+    */
+    
+    BlockQuoteProcessor(){
+        debug = false; 
+    }
+    
+    public void parse_markdown(){
+        
+        
+        /* Custom Debug Work */
+        System.out.println(String.format(">%s<",markdown));
+        markdown = markdown.replaceAll("&gt;", ">");
+        
+        int new_=1;
+        int last_=1;
+        int tab_=1;
+        
+        List<String> list_ = new ArrayList<String>();
+        List<String> propertylist = new ArrayList<String>(); // Properties
+        List<String> contentlist = new ArrayList<String>(); // Content List
+        List<Integer> nodelist = new ArrayList<Integer>(); // Node Level
+        Deque<String> tags = new ArrayDeque<String>();
+        
+        Matcher match;
+        // GroupDebug("(\\>+)(.*?)(\\{.+\\})?\n", markdown.split("\n")[2]+"\n");
+        
+        for(String x: markdown.split("\n")){
+            x+= "\n";
+            match = getMatcher("(>+)(.*?)(\\{.+\\})?\n", x);
+            if(match.find()){
+            
+                nodelist.add(match.group(1).length());
+                contentlist.add(match.group(2));
+                propertylist.add(String.join(" ", property_parser(match.group(3))));
+            }
+        }
+        
+        
+        for(int i=0; i<contentlist.size(); i++){
+            if(debug){
+            
+            System.out.println(String.format("[+] %dx %s - %s", 
+                nodelist.get(i), 
+                contentlist.get(i), 
+                propertylist.get(i)));
+        
+            }; 
+            
+            tab_ = nodelist.get(i); 
+            new_ = tab_;
+            
+            // If Decreasing Node
+            if( new_ < last_ ){
+
+                // System.out.print("Parent | ");
+                //list_.add("</blockquote>");
+                //list_.add(String.join("", Collections.nCopies(last_ - new_, "</p>\n")));
+                //list_.add(String.join("", Collections.nCopies(last_ - new_, "</blockquote>\n")));
+                
+                for(int k=0; k<last_-new_; k++){
+                    list_.add(tags.pop());
+                }
+                list_.add(String.format("<p %s > %s </p>\n", propertylist.get(i) ,contentlist.get(i)));
+                //list_.add("</p>\n");
+
+            // Increasing Node
+            }else if( new_ > last_){
+
+
+                //System.out.print("Child  | ");
+                //list_.remove(list_.size()-1);
+                list_.add(String.join("", Collections.nCopies(new_-last_, String.format("<blockquote %s >\n", propertylist.get(i)))));                
+                list_.add(String.format("<p> %s </p>\n", contentlist.get(i)));
+                tags.push("</blockquote>");
+                
+            // Constent Node
+            }else{
+                // System.out.print("Node   | ");
+                list_.add(String.format("<p %s> %s </p>",propertylist.get(i), contentlist.get(i)));
+                //list_.add("</p>\n");
+            }
+            //System.out.println(String.format("Tabs : %d | String : %s ",tab_,tmp[i]));
+            last_ = new_;
+            
+        }
+        while(!tags.isEmpty()){
+            list_.add(tags.pop());
+            
+        }
+        html = String.format("<blockquote> %s </blockquote>\n", String.join("\n", list_));
+        
+    }
+ 
+}
 
 
 
@@ -421,7 +554,7 @@ class ADMarkProcessor{
     
     String CODES_EXPRESSION = "(```[\\s\\S]+?```)";               // Code Snippet
     String TABLE_EXPRESSION = "(.+)\n([-:\\| ]{3,})(\n.+)+";   // Table
-    String BLOCKQ_EXPRESSION = "(( &gt;|&gt;)+ .+\n)";         // Blockquote
+    String BLOCKQ_EXPRESSION = "(((&gt;)+ .+\n)+)";         // Blockquote
     String ICODE_EXPRESSION = "(( {4,}.+\n)+)";                  // Internal Codes
     String SOURCE_EXPRESSION = "(\\.{5,})([\\s\\S]+?)(\\.{5,})";   // External HTML Codes Added
     
@@ -544,6 +677,7 @@ class ADMarkProcessor{
         if(debug){
             System.out.println(String.format("<h2> %s </h2>", data));
         }
+        // Heading
         converter = new HeadingProcessor();
         converter.load_markdown(data, "h%d");
         return converter.get_html();
@@ -573,6 +707,7 @@ class ADMarkProcessor{
         if(debug){
             System.out.println(String.format("<code> %s </code>", data));
         }
+        // Code
 		converter = new CodeProcessor();
         converter.load_markdown(data, "pre");
         return converter.get_html();
@@ -582,6 +717,7 @@ class ADMarkProcessor{
         if(debug){
             System.out.println(String.format("<ol> %s </ol>", data));
         }
+        // List
         converter = new ListProcessor();
         converter.load_markdown(data, "ol");
         return converter.get_html();
@@ -591,7 +727,7 @@ class ADMarkProcessor{
     if(debug){
             System.out.println(String.format("<ul> %s </ul>", data));
         }
-
+        // List
         converter = new ListProcessor();
         converter.load_markdown(data, "ul");
         return converter.get_html();
@@ -610,8 +746,11 @@ class ADMarkProcessor{
         System.out.println(String.format("<blockquote> %s </blockquote>", data));
         
         }
-        
-        return String.format("\n<blockquote> %s </blockquote>\n", data);
+        // Blockquote
+        converter = new BlockQuoteProcessor();
+        converter.load_markdown(data, "blockquote");
+        return converter.get_html();
+        //return String.format("\n<blockquote> %s </blockquote>\n", data);
         
     }
     
@@ -619,6 +758,7 @@ class ADMarkProcessor{
     if(debug){
         System.out.println(String.format("<code> %s </code>", data));
         }
+        // Code
        	converter = new CodeProcessor();
         converter.load_markdown(data, "code");
         return converter.get_html();
@@ -654,18 +794,6 @@ class ADMarkProcessor{
         return output_html;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

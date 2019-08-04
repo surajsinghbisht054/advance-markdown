@@ -1,8 +1,6 @@
 
 <!-- /* 
-========================================
-          Heading Section 
-========================================
+[ Heading Section ] (START) 
 */ -->
 
 
@@ -41,10 +39,17 @@
 <h3 > Heading Followed By Line Break </h3>
 
 
+
+<br  />
+
+
 <!-- /* 
-========================================
-       Line Break Example 
-========================================
+
+[ Heading Section ] (END) 
+
+
+[ Line Break Section ](START)
+
 */ -->
 
 
@@ -64,9 +69,12 @@
 
 
 <!-- /* 
-========================================
-        Horizontal Line break
-========================================
+
+[ Line Break Section ](END)
+
+
+[ Horizontal Line Section ](START)
+
 */ -->
 
 
@@ -82,9 +90,11 @@
 
 
 <!-- /*
-========================================
-        Code Example
-========================================
+
+[ Horizontal Line Section ](END)
+
+
+[ Code Section ](START)
 */ -->
 
 
@@ -102,9 +112,13 @@ console.log(foo(5));
 
 
 <!-- /*
-========================================
-    UnOrdered List Example
-========================================
+
+[ Code Section ](END)
+
+
+
+[ List Section ] (START) 
+
 */ -->
 
 
@@ -154,12 +168,6 @@ console.log(foo(5));
 
 
 
-<!-- /*
-========================================
-        Ordered
-========================================
-*/ -->
-
 
 <ol>
  <li class="" id="works"> . foo 
@@ -195,31 +203,11 @@ console.log(foo(5));
 
 <li> . ...or keep all the numbers as `1.` 
 </li>
+
+</ol>
  
 </ol>
 
-
-
-<!-- /*
-========================================
-    Nested Ordered UnOrdered Lists
-========================================
-*/ -->
-
-
-<br  />
-
-
-
-<br  />
-
-
-
-<hr  />
-
-
-
-<hr  />
 
 
 
@@ -270,22 +258,132 @@ console.log(foo(5));
 
 
 
-<hr  />
+<ol>
+ <li > . Lorem ipsum dolor sit amet 
+<ol  >
+
+<li> . Consectetur adipiscing elit 
+</li>
+
+<li > . Integer molestie lorem at massa 
+</li>
+
+</ol>
+
+</li>
+
+<li  > . You can use sequential numbers... 
+</li>
+
+<li > . ...or keep all the numbers as `1.` 
+</li>
+ 
+</ol>
 
 
 
-<hr  />
+
+<ol>
+ <li > 7. foo 
+</li>
+
+<li > . bar 
+</li>
+ 
+</ol>
 
 
 
-<hr  />
+
+<h2 > Lists </h2>
 
 
 
-<hr  />
+<ul>
+ <li >  Create a list by starting a line with `+`, `-`, or `*` 
+</li>
+
+<li >  Sub-lists are made by indenting 2 spaces: 
+</li>
+
+<li >  Marker character change forces new list start: 
+</li>
+
+<li >  Ac tristique libero volutpat at 
+</li>
+
+<li >  Facilisis in pretium nisl aliquet 
+</li>
+
+<li >  Nulla volutpat aliquam velit 
+</li>
+
+<li >  Very easy! 
+</li>
+ 
+</ul>
+
 
 
 <!-- /*
+
+[ List Section ] (END) 
+
+[ BlockQuote Section ](START)
+
+*/ -->
+
+
+<blockquote> <p >  This is the first level of quoting. </p>
+<p >  is it here </p>
+<p >  > This is nested blockquote. </p>
+<p >  yes </p>
+<p >  Back to the first level. </p> </blockquote>
+
+
+
+
+<blockquote> <p >  This is also level One </p>
+<blockquote class="" id="thisisproperty" >
+
+<p>  its second levele  </p>
+
+<blockquote  >
+
+<p>  this is third </p>
+
+</blockquote>
+</blockquote>
+<p  >  again first </p>
+ </blockquote>
+
+
+
+
+<blockquote> <p class="orclass " id="thisworks">  This is also level One </p>
+<blockquote class="" id="" why=yes >
+
+<p>  its second levele  </p>
+
+<blockquote class="" id="" what=works >
+
+<p>  this is third </p>
+
+</blockquote>
+</blockquote>
+<p  >  again first </p>
+ </blockquote>
+
+
+
+<!-- /*
+
+[ BlockQuote Section ](END)
+
+*/ -->
+
+<!-- /*
+
 
 
 Block code &quot;fences&quot;
@@ -302,34 +400,6 @@ Indented code
 Block code &quot;fences&quot;
 
 
-Ordered
-
-1. Lorem ipsum dolor sit amet
-    2. Consectetur adipiscing elit
-    3. Integer molestie lorem at massa
-
-
-1. You can use sequential numbers...
-1. ...or keep all the numbers as `1.`
-
-Start numbering with offset:
-
-57. foo
-1. bar
-
-
-
-## Lists
-
-Unordered
-
-+ Create a list by starting a line with `+`, `-`, or `*`
-+ Sub-lists are made by indenting 2 spaces:
-- Marker character change forces new list start:
- * Ac tristique libero volutpat at
- + Facilisis in pretium nisl aliquet
- - Nulla volutpat aliquam velit
-+ Very easy!
 
 
 

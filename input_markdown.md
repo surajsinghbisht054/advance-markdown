@@ -1,8 +1,6 @@
 
 /* 
-========================================
-	      Heading Section 
-========================================
+[ Heading Section ] (START) 
 */
 
 
@@ -18,12 +16,17 @@
 
 
 ### Heading Followed By Line Break
--
+---
+
+
 
 /* 
-========================================
-       Line Break Example 
-========================================
+
+[ Heading Section ] (END) 
+
+
+[ Line Break Section ](START)
+
 */
 
 --
@@ -33,9 +36,12 @@
 
 
 /* 
-========================================
-		Horizontal Line break
-========================================
+
+[ Line Break Section ](END)
+
+
+[ Horizontal Line Section ](START)
+
 */
 ==
 ={#this_is_id .classOne .classTwo font="Arial Size 12px"}
@@ -45,9 +51,11 @@
 
 
 /*
-========================================
-		Code Example
-========================================
+
+[ Horizontal Line Section ](END)
+
+
+[ Code Section ](START)
 */
 Simple 
 
@@ -68,9 +76,13 @@ console.log(foo(5));
 
 
 /*
-========================================
-	UnOrdered List Example
-========================================
+
+[ Code Section ](END)
+
+
+
+[ List Section ] (START) 
+
 */
 
 + Create a list by starting a line with `+`, `-`, or `*` {#this_is_for_table .thisIsfortable }
@@ -86,11 +98,6 @@ console.log(foo(5));
 + Very easy!
 
 
-/*
-========================================
-		Ordered
-========================================
-*/
 
 Simple ordered table
 
@@ -107,16 +114,8 @@ Nested Ordered Table
 1. You can also set property {#like_this_one}
 	1. ...or keep all the numbers as `1.`{#or_this_one}
 
-/*
-========================================
-	Nested Ordered UnOrdered Lists
-========================================
-*/
 
---
---
-==
-==
+
 
 + Create a list by starting a line with `+`, `-`, or `*` {#this_is_for_table .thisIsfortable }
 + Sub-lists are made by indenting 2 spaces:{#this_is_for_row_One}
@@ -132,29 +131,6 @@ Nested Ordered Table
 
 
 
-==
-==
-==
-==
-
-/*
-
-
-Block code "fences"
-
-
-Indented code
-
-    // Some comments
-    line 1 of code
-    line 2 of code
-    line 3 of code
-
-
-Block code "fences"
-
-
-Ordered
 
 1. Lorem ipsum dolor sit amet
     2. Consectetur adipiscing elit
@@ -173,7 +149,6 @@ Start numbering with offset:
 
 ## Lists
 
-Unordered
 
 + Create a list by starting a line with `+`, `-`, or `*`
 + Sub-lists are made by indenting 2 spaces:
@@ -182,6 +157,66 @@ Unordered
  + Facilisis in pretium nisl aliquet
  - Nulla volutpat aliquam velit
 + Very easy!
+
+
+
+
+
+/*
+
+[ List Section ] (END) 
+
+[ BlockQuote Section ](START)
+
+*/
+
+
+
+> This is the first level of quoting.
+> is it here
+> > This is nested blockquote.
+> yes
+> Back to the first level.
+
+
+
+> This is also level One
+>> its second levele {#thisisproperty}
+>>> this is third
+> again first
+
+> This is also level One{#thisworks .orclass }
+>> its second levele {why=yes}
+>>> this is third{what=works}
+> again first
+
+
+
+
+
+/*
+
+[ BlockQuote Section ](END)
+
+*/
+/*
+
+
+
+Block code "fences"
+
+
+Indented code
+
+    // Some comments
+    line 1 of code
+    line 2 of code
+    line 3 of code
+
+
+Block code "fences"
+
+
 
 
 
