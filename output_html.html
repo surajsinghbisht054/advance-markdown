@@ -1,8 +1,6 @@
-
 <!-- /* 
 [ Heading Section ] (START) 
 */ -->
-
 
 <h1 > h1 Heading  </h1>
 
@@ -42,7 +40,6 @@
 
 <br  />
 
-
 <!-- /* 
 
 [ Heading Section ] (END) 
@@ -51,7 +48,6 @@
 [ Line Break Section ](START)
 
 */ -->
-
 
 <br  />
 
@@ -67,7 +63,6 @@
 
 <br class="" id="this_is_id" />
 
-
 <!-- /* 
 
 [ Line Break Section ](END)
@@ -77,8 +72,11 @@
 
 */ -->
 
-
 <hr  />
+
+
+
+<hr class="classOne classTwo" id="this_is_id" font="Arial Size 12px" />
 
 
 
@@ -88,19 +86,19 @@
 
 <hr class="" id="this_is_id" />
 
-
 <!-- /*
 
 [ Horizontal Line Section ](END)
 
 
 [ Code Section ](START)
-*/ -->
+*/ --><p> Simple  </p>
 
 
 <pre class="" id=""> Sample text here...
  </pre>
 
+<p> Syntax highlighting </p>
 
 
 <pre class="This_is_Class Another_Class" id="this_is_id" backgroud="black"> var foo = function (bar) {
@@ -109,7 +107,6 @@ return bar++;
 
 console.log(foo(5));
  </pre>
-
 
 <!-- /*
 
@@ -120,7 +117,6 @@ console.log(foo(5));
 [ List Section ] (START) 
 
 */ -->
-
 
 <ul>
  <li class="thisIsfortable " id="this_is_for_table">  Create a list by starting a line with `+`, `-`, or `*`  
@@ -167,6 +163,7 @@ console.log(foo(5));
 </ul>
 
 
+<p> Simple ordered table </p>
 
 
 <ol>
@@ -182,6 +179,7 @@ console.log(foo(5));
 </ol>
 
 
+<p> Nested Ordered Table </p>
 
 
 <ol>
@@ -281,6 +279,7 @@ console.log(foo(5));
 </ol>
 
 
+<p> Start numbering with offset: </p>
 
 
 <ol>
@@ -324,7 +323,6 @@ console.log(foo(5));
 </ul>
 
 
-
 <!-- /*
 
 [ List Section ] (END) 
@@ -332,7 +330,6 @@ console.log(foo(5));
 [ BlockQuote Section ](START)
 
 */ -->
-
 
 <blockquote> <p >  This is the first level of quoting. </p>
 <p >  is it here </p>
@@ -375,7 +372,6 @@ console.log(foo(5));
  </blockquote>
 
 
-
 <!-- /*
 
 [ BlockQuote Section ](END)
@@ -386,32 +382,31 @@ console.log(foo(5));
 
 */ -->
 
-
 <pre class="" id=""> // Some comments
 line 1 of code
 line 2 of code
 line 3 of code
  </pre>
 
-
 <!-- /*
 [ Indent Code Section ](END)
 
-
-Block code &quot;fences&quot;
-
-
-Indented code
-
-    // Some comments
-    line 1 of code
-    line 2 of code
-    line 3 of code
+[ Embed HTML Code Section ](START)
 
 
-Block code &quot;fences&quot;
+*/ -->
+<!-- [ HTML CODE EMBED SECTION ] (START) -->
+ 
+<h1>Heading 1</h1>
+<h2>Heading 2</h2>
+<h3>Heading 3</h3>
+<h4>Heading 4</h4>
+<h5>Heading 5</h5>
+<h6>Heading 6</h6>  
+<!~-[ HTML CODE EMBED SECTION ] (END) -->
+<!-- /*
 
-
+[ Embed HTML Code Section ](END)
 
 
 
@@ -438,13 +433,6 @@ Markdown | Less | Pretty
 1 | 2 | 3
 
 
-&gt; This is the first level of quoting.
-&gt; is it here
-&gt; &gt; This is nested blockquote.
-&gt; yes
-&gt; Back to the first level.
-
-
 
 
 
@@ -460,14 +448,6 @@ You will like those projects!
 
 ---
 
-
-## Horizontal Rules
-
-___
-
----
-
-***
 
 
 ## Typographic replacements
@@ -496,35 +476,10 @@ _This is italic text_
 ~~Strikethrough~~
 
 
-## Blockquotes
-
-
-&gt; Blockquotes can also be nested...
-&gt;&gt; ...by using additional greater-than signs right next to each other...
-&gt; &gt; &gt; ...or with spaces between arrows.
-&gt; Check Again The Complexity
-
-
-
-
 
 ## Code
 
 Inline `code`
-
-```
-Sample text here...
-```
-
-Syntax highlighting
-
-``` js
-var foo = function (bar) {
-return bar++;
-};
-
-console.log(foo(5));
-```
 
 
 ## Links

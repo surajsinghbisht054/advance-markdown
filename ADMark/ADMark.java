@@ -556,7 +556,8 @@ class ADMarkProcessor{
     String TABLE_EXPRESSION = "(.+)\n([-:\\| ]{3,})(\n.+)+";   // Table
     String BLOCKQ_EXPRESSION = "(((&gt;)+ .+\n)+)";         // Blockquote
     String ICODE_EXPRESSION = "(( {4}.+\n)+)";                  // Internal Codes
-    String SOURCE_EXPRESSION = "(\\.{5,})([\\s\\S]+?)(\\.{5,})";   // External HTML Codes Added
+    String SOURCE_EXPRESSION = "\n(\\.{5,})([\\s\\S]+?)(\\.{5,})";   // External HTML Codes Added
+    String PARAGRAPH_EXPRESSION = "(.+)";
     
     /* Combining All Expression */
     String EXP = String.join("|", 
@@ -570,7 +571,8 @@ class ADMarkProcessor{
                     FOLLOWED_BY_NEWLINE + TABLE_EXPRESSION,
                     FOLLOWED_BY_NEWLINE + BLOCKQ_EXPRESSION,
                     FOLLOWED_BY_NEWLINE + ICODE_EXPRESSION,
-                    SOURCE_EXPRESSION
+                    SOURCE_EXPRESSION,
+                    PARAGRAPH_EXPRESSION
                     );
 
 
@@ -644,9 +646,14 @@ class ADMarkProcessor{
             output_html += process_icode(data);
             
         }else if(data.matches(SOURCE_EXPRESSION)){
-            output_html += process_htmlcodes(data);
+            data = data.replaceAll("\n\\.\\.\\.\\.\\.", "");
+            output_html += String.format("\n<!-- [ HTML CODE EMBED SECTION ] (START) -->\n %s \n<!--[ HTML CODE EMBED SECTION ] (END) -->\n", process_htmlcodes(data));
+        
+        }else if(data.matches(COMMENTS_EXPRESSION)){
+            output_html += String.format("<!-- %s -->", data);
+            
         }else {
-            output_html += String.format("\n<!-- %s -->\n", data);
+            output_html += String.format("<p> %s </p>\n", data);
         }
     }
     
