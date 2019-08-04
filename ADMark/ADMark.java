@@ -448,7 +448,7 @@ class BlockQuoteProcessor
         
         
         /* Custom Debug Work */
-        System.out.println(String.format(">%s<",markdown));
+        // System.out.println(String.format(">%s<",markdown));
         markdown = markdown.replaceAll("&gt;", ">");
         
         int new_=1;
@@ -555,7 +555,7 @@ class ADMarkProcessor{
     String CODES_EXPRESSION = "(```[\\s\\S]+?```)";               // Code Snippet
     String TABLE_EXPRESSION = "(.+)\n([-:\\| ]{3,})(\n.+)+";   // Table
     String BLOCKQ_EXPRESSION = "(((&gt;)+ .+\n)+)";         // Blockquote
-    String ICODE_EXPRESSION = "(( {4,}.+\n)+)";                  // Internal Codes
+    String ICODE_EXPRESSION = "(( {4}.+\n)+)";                  // Internal Codes
     String SOURCE_EXPRESSION = "(\\.{5,})([\\s\\S]+?)(\\.{5,})";   // External HTML Codes Added
     
     /* Combining All Expression */
@@ -756,11 +756,16 @@ class ADMarkProcessor{
     
     private String process_icode(String data){
     if(debug){
-        System.out.println(String.format("<code> %s </code>", data));
+        System.out.println(String.format("<pre> %s </pre>", data));
         }
+        
+        // Converting ICode to Code Syntax
+        data = String.format("```\n%s```", data);
+        data = data.replaceAll("\n    ", "\n");
+        
         // Code
        	converter = new CodeProcessor();
-        converter.load_markdown(data, "code");
+        converter.load_markdown(data, "pre");
         return converter.get_html();
     }
     

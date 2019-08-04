@@ -198,15 +198,11 @@ Start numbering with offset:
 
 [ BlockQuote Section ](END)
 
+
+
+[ Indent Code Section ](START)
+
 */
-/*
-
-
-
-Block code "fences"
-
-
-Indented code
 
     // Some comments
     line 1 of code
@@ -214,10 +210,9 @@ Indented code
     line 3 of code
 
 
-Block code "fences"
 
-
-
+/*
+[ Indent Code Section ](END)
 
 
 ## Tables
@@ -243,13 +238,6 @@ Markdown | Less | Pretty
 1 | 2 | 3
 
 
-> This is the first level of quoting.
-> is it here
-> > This is nested blockquote.
-> yes
-> Back to the first level.
-
-
 
 
 
@@ -265,14 +253,6 @@ You will like those projects!
 
 ---
 
-
-## Horizontal Rules
-
-___
-
----
-
-***
 
 
 ## Typographic replacements
@@ -301,35 +281,10 @@ _This is italic text_
 ~~Strikethrough~~
 
 
-## Blockquotes
-
-
-> Blockquotes can also be nested...
->> ...by using additional greater-than signs right next to each other...
-> > > ...or with spaces between arrows.
-> Check Again The Complexity
-
-
-
-
 
 ## Code
 
 Inline `code`
-
-```
-Sample text here...
-```
-
-Syntax highlighting
-
-``` js
-var foo = function (bar) {
-return bar++;
-};
-
-console.log(foo(5));
-```
 
 
 ## Links
