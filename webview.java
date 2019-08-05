@@ -55,14 +55,12 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		private JLabel markdownlabel = new JLabel("  MarkDown View  ");
 		private JLabel htmllabel = new JLabel("  Html View  ");
 		private JLabel webviewlabel = new JLabel("  Browser View  ");
-		private JTextArea markdown;		//for markdown coading 
-		private JTextArea html;			//for html coading
-		private JPanel browserView = new JPanel();
-		private JFXPanel web = new JFXPanel();					//for webview
-		private WebView webView;								//webview object	
+		private JTextArea markdown;				//for markdown coading 
+		private JTextArea html;					//for html coading
+		private JFXPanel web = new JFXPanel();	//for webview
+		private WebView webView;				//webview object	
 		
 		//creating scroll bar for all components
-		//private JScrollPane scrollAll;
 		private JScrollPane scrollhtml;
 		private JScrollPane scrollweb;
 		private JScrollPane scrollmarkdown;
@@ -73,6 +71,9 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		private String liveHtmlContent;
 
 		private int switchButtonStatus=1;
+
+		int offset;
+		int line;
 
 	public webview()
 	{	
@@ -93,26 +94,24 @@ class webview extends JFrame implements ActionListener,DocumentListener
 
         markdown = new JTextArea(1,getSize().width/20);
         html = new JTextArea(1,getSize().width/20);
-        browserView.add(web);
+        
 
 		markdownEngine = new ADMark();
 		markdownContent= markdownEngine.input_data;
 		htmlContent = markdownEngine.output_data;
 		
 		//adding scroll bar to every component
-		//scrollAll = new JScrollPane(viewportPanel);
 		scrollhtml = new JScrollPane(html);
-		//scrollweb = new JScrollPane(browserView);
 		scrollmarkdown = new JScrollPane(markdown);
 
 		//config panels
 		markdown.setTabSize(1);
+		markdown.setFont(new Font("Courier", Font.BOLD,18));
+		markdown.setMargin(new Insets(0,10,10,0));
 		html.setTabSize(1);
 		html.setFont(new Font("Courier", Font.BOLD,18));
-		markdown.setFont(new Font("Courier", Font.BOLD,18));
-		html.setMargin(new Insets(0,10,10,0));
+		html.setMargin(new Insets(10,10,10,10));
 		html.setEditable(false);
-		markdown.setMargin(new Insets(0,10,10,0));
 		web.setBorder(new LineBorder(Color.BLACK,1,false));
 		
 
@@ -132,6 +131,7 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		markdownlabel.setForeground(Color.WHITE);		
 		markdownlabel.setBackground(Color.RED);
 		markdownlabel.setBorder(new LineBorder(Color.RED,5,true));
+		
 		header.setBackground(Color.BLACK);
 		header.setLayout(new BorderLayout());
 		header.setBorder(new LineBorder(new Color(67,120,210),5,false));
@@ -149,6 +149,7 @@ class webview extends JFrame implements ActionListener,DocumentListener
 
 		
 		//initializing web view content
+		Platform.setImplicitExit(false);
 		Platform.runLater(()->{
 				    webView = new WebView();
 				  
@@ -169,7 +170,6 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		switchWindowViewButton.setBorder(new LineBorder(Color.RED,3,true));
 
 		//adding document listener
-		html.getDocument().addDocumentListener(this);
 		markdown.getDocument().addDocumentListener(this);
 
 
@@ -198,12 +198,10 @@ class webview extends JFrame implements ActionListener,DocumentListener
 			try{
 				liveHtmlContent = markdownEngine.ADMark(markdown.getText());
 				html.setText(liveHtmlContent);
+				html.setCaretPosition(0);
 
 				Platform.runLater(()->{
-					    webView = new WebView();
-					  
-					    web.setScene(new Scene(webView));
-					    webView.getEngine().loadContent(liveHtmlContent,"text/html");
+					   webView.getEngine().loadContent(liveHtmlContent,"text/html");
 					    
 				    });
 			}
@@ -216,12 +214,10 @@ class webview extends JFrame implements ActionListener,DocumentListener
 			try{
 				liveHtmlContent = markdownEngine.ADMark(markdown.getText());
 				html.setText(liveHtmlContent);
+				html.setCaretPosition(0);
 			
 				Platform.runLater(()->{
-					    webView = new WebView();
-					  
-					    web.setScene(new Scene(webView));
-					    webView.getEngine().loadContent(liveHtmlContent,"text/html");
+					  webView.getEngine().loadContent(liveHtmlContent,"text/html");
 					    
 				    });
 			}
@@ -233,14 +229,13 @@ class webview extends JFrame implements ActionListener,DocumentListener
 			try{
 				liveHtmlContent = markdownEngine.ADMark(markdown.getText());
 				html.setText(liveHtmlContent);
-			
+				html.setCaretPosition(0);
+				System.out.println(""+markdown.getCaretPosition());
 				Platform.runLater(()->{
-					    webView = new WebView();
-					  
-					    web.setScene(new Scene(webView));
-					    webView.getEngine().loadContent(liveHtmlContent,"text/html");
+					  webView.getEngine().loadContent(liveHtmlContent,"text/html");
 					    
 				    });
+				
 			}
 			catch(Exception l){}
 		};
@@ -262,19 +257,6 @@ class webview extends JFrame implements ActionListener,DocumentListener
 					switchButtonStatus = 1;
 					switchWindowViewButton.setText(" Switch To HTML VIEW ");
 
-
-
-					liveHtmlContent=html.getText();
-					
-					Platform.runLater(()->{
-
-					    webView = new WebView();
-					  	
-					    web.setScene(new Scene(webView));
-					    webView.getEngine().loadContent(liveHtmlContent,"text/html");
-					    
-				    });
-					
 					
 					viewportPanel.remove(scrollhtml);
 					viewportPanel.remove(scrollmarkdown);
@@ -310,6 +292,7 @@ class webview extends JFrame implements ActionListener,DocumentListener
 					viewportPanel.remove(header);
 					header.remove(webviewlabel);
 
+					System.out.println(""+Platform.isImplicitExit());
 
 					header.add(htmllabel,BorderLayout.EAST);
 					viewportPanel.add(header,BorderLayout.NORTH);
