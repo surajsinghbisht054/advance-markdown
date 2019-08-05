@@ -57,6 +57,7 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		private JLabel webviewlabel = new JLabel("  Browser View  ");
 		private JTextArea markdown;		//for markdown coading 
 		private JTextArea html;			//for html coading
+		private JPanel browserView = new JPanel();
 		private JFXPanel web = new JFXPanel();					//for webview
 		private WebView webView;								//webview object	
 		
@@ -92,6 +93,7 @@ class webview extends JFrame implements ActionListener,DocumentListener
 
         markdown = new JTextArea(1,getSize().width/20);
         html = new JTextArea(1,getSize().width/20);
+        browserView.add(web);
 
 		markdownEngine = new ADMark();
 		markdownContent= markdownEngine.input_data;
@@ -100,7 +102,7 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		//adding scroll bar to every component
 		//scrollAll = new JScrollPane(viewportPanel);
 		scrollhtml = new JScrollPane(html);
-		scrollweb = new JScrollPane(web);
+		//scrollweb = new JScrollPane(browserView);
 		scrollmarkdown = new JScrollPane(markdown);
 
 		//config panels
@@ -109,8 +111,10 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		html.setFont(new Font("Courier", Font.BOLD,18));
 		markdown.setFont(new Font("Courier", Font.BOLD,18));
 		html.setMargin(new Insets(0,10,10,0));
+		html.setEditable(false);
 		markdown.setMargin(new Insets(0,10,10,0));
 		web.setBorder(new LineBorder(Color.BLACK,1,false));
+		
 
 		//adding button on buttonpanel
 		buttonPanel.add(switchWindowViewButton);
@@ -141,7 +145,6 @@ class webview extends JFrame implements ActionListener,DocumentListener
 		viewportPanel.add(header,BorderLayout.NORTH);
 		viewportPanel.add(scrollmarkdown,BorderLayout.WEST);
 		viewportPanel.add(web,BorderLayout.CENTER);
-
 		
 
 		
@@ -253,7 +256,7 @@ class webview extends JFrame implements ActionListener,DocumentListener
 			{
 				if(switchButtonStatus == 0)
 				{
-					System.out.println("markdown view");
+					System.out.println("Browser view");
 
 					//changing status of button and text
 					switchButtonStatus = 1;
@@ -264,15 +267,17 @@ class webview extends JFrame implements ActionListener,DocumentListener
 					liveHtmlContent=html.getText();
 					
 					Platform.runLater(()->{
+
 					    webView = new WebView();
-					  
+					  	
 					    web.setScene(new Scene(webView));
 					    webView.getEngine().loadContent(liveHtmlContent,"text/html");
 					    
 				    });
 					
+					
 					viewportPanel.remove(scrollhtml);
-					viewportPanel.remove(web);
+					viewportPanel.remove(scrollmarkdown);
 					viewportPanel.remove(header);
 					header.remove(htmllabel);
 					header.remove(webviewlabel);
@@ -282,6 +287,8 @@ class webview extends JFrame implements ActionListener,DocumentListener
 					viewportPanel.add(header,BorderLayout.NORTH);
 					viewportPanel.add(scrollmarkdown,BorderLayout.WEST);
 					viewportPanel.add(web,BorderLayout.CENTER);
+				
+					
 					
 					this.revalidate();
 					this.repaint();
@@ -294,28 +301,20 @@ class webview extends JFrame implements ActionListener,DocumentListener
 
 					//changing status of button and text
 					switchButtonStatus = 0;
-					switchWindowViewButton.setText(" Switch To MARKDOWN VIEW ");
+					switchWindowViewButton.setText(" Switch To Browser View ");
 
 					liveHtmlContent=html.getText();
-									
-					Platform.runLater(()->{
-					    webView = new WebView();
-					  
-					    web.setScene(new Scene(webView));
-					    webView.getEngine().loadContent(liveHtmlContent,"text/html");
-				    });
-			
+					
 					viewportPanel.remove(scrollmarkdown);
 					viewportPanel.remove(web);
 					viewportPanel.remove(header);
-					header.remove(markdownlabel);
 					header.remove(webviewlabel);
 
-					header.add(htmllabel,BorderLayout.WEST);
-					header.add(webviewlabel,BorderLayout.EAST);
+
+					header.add(htmllabel,BorderLayout.EAST);
 					viewportPanel.add(header,BorderLayout.NORTH);
-					viewportPanel.add(scrollhtml,BorderLayout.WEST);
-					viewportPanel.add(web,BorderLayout.CENTER);
+					viewportPanel.add(scrollmarkdown,BorderLayout.WEST);
+					viewportPanel.add(scrollhtml,BorderLayout.CENTER);
 						
 					this.revalidate();
 					this.repaint();
