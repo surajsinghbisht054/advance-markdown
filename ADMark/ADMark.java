@@ -534,7 +534,108 @@ class BlockQuoteProcessor
 }
 
 
+class TableProcessor 
+  extends HTMLObject{
+    
+    /*
+    private String tag;
+    private String property[];
+    private String content[];
+    private String html;
+    private String markdown;
+    */
+    
+    // to stroe all generated html output tags
+    List<String> htmltags = new ArrayList<String>();
+    
+    // To Store Heading titles
+    List<String> heading = new ArrayList<String>();
+    
+    // To store row lines
+    List<String> row = new ArrayList<String>();
 
+
+    TableProcessor(){
+        debug=false;
+        
+    }
+
+    public void parse_markdown(){
+        
+        Matcher match = getMatcher("(.+)(\n[-:\\| ]{3,})([\\w\\W]+)",markdown);
+        
+        if(match.find()){
+        
+            // Table Heading Portion
+            for(String r:match.group(1).split("\\|")){
+                heading.add(r);
+            }
+            
+            // Table All Row Portion
+            for(String r:match.group(3).split("\n"))
+                row.add(r);
+            
+        }
+        
+        /*
+            Table Heading Processor
+        */
+        
+        htmltags.add("<tr>");
+        
+        for(String r:heading){
+        
+            // Jump Blank 
+            if(r.equals("")){
+            continue;
+            }
+            
+            // Add Table Heading tags
+            htmltags.add(String.format("<th> %s </th>", r));
+        }
+        htmltags.add("</tr>");
+        
+        
+        /*
+            Table Row Processor
+        */
+        
+        for(String r:row){
+            
+            // Jump blank rows
+            if(r.equals("")){
+                continue;
+            }
+            
+            htmltags.add("<tr>");
+            
+            for(String dcell: r.split("\\|")){
+            
+            // Jump blank data cells
+            if(dcell.equals("")){
+                continue;
+            }
+            htmltags.add(String.format("<td> %s </td>", dcell)); 
+            
+            }
+
+                       
+            htmltags.add("</tr>");
+        }
+        
+        html = String.format("<table> %s </table>", String.join("\n", htmltags));
+        
+        /*
+    
+        for(String ch:heading){
+            System.out.println(ch);
+        }
+        for(String ch:row){
+            System.out.println(ch);
+        }
+    */
+    }
+}
 
 /* Still UnderProcess */
 
@@ -744,8 +845,11 @@ class ADMarkProcessor{
     if(debug){
         System.out.println(String.format("<data> %s </data>", data));
         }
-        
-        return String.format("\n<table> %s </table>\n", data);
+        // Table Processor
+        converter = new TableProcessor();
+        converter.load_markdown(data, "table");
+        return converter.get_html();
+        //return String.format("\n<table> %s </table>\n", data);
     }
     
     private String process_blockquote(String data){

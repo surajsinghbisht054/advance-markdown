@@ -229,11 +229,16 @@ Start numbering with offset:
 <h6>Heading 6</h6> 
 .....
 
+
 /*
+
 
 [ Embed HTML Code Section ](END)
 
 
+[ Table Code Section ](START)
+
+*/
 
 ## Tables
 
@@ -258,6 +263,11 @@ Markdown | Less | Pretty
 1 | 2 | 3
 
 
+
+/*
+
+
+[ Table Code Section ](END)
 
 
 
