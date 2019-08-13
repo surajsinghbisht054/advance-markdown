@@ -174,8 +174,84 @@ abstract class HTMLObject{
 }
 
 
+//processing <b>,<i>,<strike> tag
+class LittleInterPreter{
+  
+    
 
+    LittleInterPreter(){
+       
+    }
 
+    
+    public String processSyntax(String Content){
+
+            List<Integer> bold = new ArrayList<Integer>();              //for holding no and position of (*) in a line
+            List<Integer> italic = new ArrayList<Integer>();            //for holding no and position of (_) in a line
+            List<Integer> strike = new ArrayList<Integer>();            //for holding no and position of (~) in a line
+            List<String> unformattedGroup= new ArrayList<String>();     //this contains text to be replace with 
+            List<String> formattedGroup= new ArrayList<String>();        //this contains the replaced text
+            Content = Content + " ";
+
+            //process start by analysing each character in given line
+            for(int i=0;i<Content.length();i++){
+                     
+                     /* adding position of (*,_,~) in their repective variable as bold,italic,strike*/
+                    if(Content.charAt(i)=='*' && Content.charAt(i+1)=='*')
+                    {   
+                        bold.add(i);
+                        bold.add(i+1);
+                                            
+                    }
+                    else if(Content.charAt(i)=='_' && Content.charAt(i+1)=='_')
+                    {
+                        italic.add(i);
+                        italic.add(i+1);
+
+                    }
+                    else if(Content.charAt(i)=='~' && Content.charAt(i+1)=='~')
+                    {
+                        strike.add(i);
+                        strike.add(i+1);
+
+                    }
+                    
+            }   
+           /*now processing each selected string from **some text** to <br>some text</br> */
+            for(int j=0;j<bold.size();j+=4)
+            {   
+                unformattedGroup.add(Content.substring(bold.get(j),(bold.get(j+3)+1)));
+                formattedGroup.add("<b>"+(Content.substring((bold.get(j+1)+1),(bold.get(j+3)-1)))+"</b>");
+                
+            }
+            for(int j=0;j<italic.size();j+=4)
+            {   
+                unformattedGroup.add(Content.substring(italic.get(j),(italic.get(j+3)+1)));
+                formattedGroup.add("<i>"+(Content.substring((italic.get(j+1)+1),(italic.get(j+3)-1)))+"</i>");
+                
+            }
+            for(int j=0;j<strike.size();j+=4)
+            {   
+                unformattedGroup.add(Content.substring(strike.get(j),(strike.get(j+3)+1)));
+                formattedGroup.add("<strike>"+(Content.substring((strike.get(j+1)+1),(strike.get(j+3)-1)))+"</strike>");
+                
+            }
+           
+
+            //replacing text with formated text
+            for(int i=0;i<formattedGroup.size();i++)
+            {     
+                Content=Content.replace(unformattedGroup.get(i),formattedGroup.get(i)); 
+
+            }
+        
+           
+            return Content;
+
+    }
+    
+   
+}
 
 
 
@@ -191,8 +267,10 @@ class HeadingProcessor
     private String html;
     private String markdown;
     */
+   
     HeadingProcessor(){
         debug = false; 
+        
     }
     public void parse_markdown(){
         // GroupDebug("(#+) (.+?)(\\{.+\\})?\n", markdown);
@@ -206,6 +284,8 @@ class HeadingProcessor
             // Content Parser
             content = new String[]{match.group(2)};
             
+           
+
             // Property Parser 
             property = property_parser(match.group(3));
             
@@ -291,12 +371,14 @@ class CodeProcessor
             
             // Content Parser
             content = new String[]{match.group(3)};
+
+           
             
             // Html Generator
             html = String.format("<%s %s> %s </%s>", 
                                  tag,
                                  String.join(" ", property),
-                                 String.join(" ",content),
+                                 String.join(" ", content),
                                  tag
                                  );
         } 
@@ -754,6 +836,7 @@ class ADMarkProcessor{
             output_html += String.format("<!-- %s -->", data);
             
         }else {
+            
             output_html += String.format("<p> %s </p>\n", data);
         }
     }
@@ -923,14 +1006,17 @@ public class ADMark{
 	private static final String output_file = "./output_html.html";  // Output File Path
 	public String input_data; // Input Markdown Text
 	public String output_data; // Output HTML Source Code
-
-	/* Constructor */
+    
+    private LittleInterPreter processedtext = new LittleInterPreter();
+	
+    /* Constructor */
 	public ADMark(){
 
 		// Get Input
 		input_data = ReadFileData(input_file);
 		ADMarkProcessor obj = new ADMarkProcessor(input_data);
 		output_data = obj.getHTML(); 
+        output_data = processedtext.processSyntax(output_data);
 		// Write Output
 		WriteFileData(output_file, output_data);
 	}
@@ -939,7 +1025,7 @@ public class ADMark{
 		input_data = markdownContent;
 		ADMarkProcessor obj = new ADMarkProcessor(input_data);
 		output_data = obj.getHTML(); 
-
+        output_data = processedtext.processSyntax(output_data);
 		// Write Output
 		WriteFileData(output_file, output_data);
 		return output_data;
