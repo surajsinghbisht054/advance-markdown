@@ -230,7 +230,7 @@ class webview extends JFrame implements ActionListener,DocumentListener
 				liveHtmlContent = markdownEngine.ADMark(markdown.getText());
 				html.setText(liveHtmlContent);
 				html.setCaretPosition(0);
-				System.out.println(""+markdown.getCaretPosition());
+				//System.out.println(""+markdown.getCaretPosition());
 				Platform.runLater(()->{
 					  webView.getEngine().loadContent(liveHtmlContent,"text/html");
 					    

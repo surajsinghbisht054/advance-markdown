@@ -8,7 +8,7 @@
 ## h2 Heading {#this_is_id .classOne .classTwo font="Arial Size 12px"}
 ### h3 Heading {#anotherId}
 #### h4 Heading {.JustClass }
-##### h5 *_Heading-* { }
+##### h5 _Heading_ { }
 ###### h6 Heading 
 
 ## Simple Heading Followed By Horizontal Line

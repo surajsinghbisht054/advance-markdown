@@ -197,16 +197,16 @@ class LittleInterPreter{
             for(int i=0;i<Content.length();i++){
                      
                      /* adding position of (*,_,~) in their repective variable as bold,italic,strike*/
-                    if(Content.charAt(i)=='*' && Content.charAt(i+1)=='*')
+                    if((Content.charAt(i)=='*' && Content.charAt(i+1)=='*') || (Content.charAt(i)=='_' && Content.charAt(i+1)=='_'))
                     {   
                         bold.add(i);
                         bold.add(i+1);
                                             
                     }
-                    else if(Content.charAt(i)=='_' && Content.charAt(i+1)=='_')
+                    else if((Content.charAt(i)=='_' && Content.charAt(i+1)!= '_' && Content.charAt(i-1)!='_') || (Content.charAt(i)=='*' && Content.charAt(i+1)!= '*' && Content.charAt(i-1)!='*') )
                     {
                         italic.add(i);
-                        italic.add(i+1);
+                        //italic.add(i+1);
 
                     }
                     else if(Content.charAt(i)=='~' && Content.charAt(i+1)=='~')
@@ -217,6 +217,7 @@ class LittleInterPreter{
                     }
                     
             }   
+            System.out.println(italic.size());
            /*now processing each selected string from **some text** to <br>some text</br> */
             for(int j=0;j<bold.size();j+=4)
             {   
@@ -224,10 +225,10 @@ class LittleInterPreter{
                 formattedGroup.add("<b>"+(Content.substring((bold.get(j+1)+1),(bold.get(j+3)-1)))+"</b>");
                 
             }
-            for(int j=0;j<italic.size();j+=4)
+            for(int j=0;j<italic.size();j+=2)
             {   
-                unformattedGroup.add(Content.substring(italic.get(j),(italic.get(j+3)+1)));
-                formattedGroup.add("<i>"+(Content.substring((italic.get(j+1)+1),(italic.get(j+3)-1)))+"</i>");
+                unformattedGroup.add(Content.substring(italic.get(j),(italic.get(j+1)+1)));
+                formattedGroup.add("<i>"+(Content.substring((italic.get(j)+1),(italic.get(j+1))))+"</i>");
                 
             }
             for(int j=0;j<strike.size();j+=4)
