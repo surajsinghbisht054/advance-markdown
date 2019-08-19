@@ -173,6 +173,11 @@ abstract class HTMLObject{
     protected abstract void parse_markdown();
 }
 
+/*
+==============================================================================================
+
+                                        OLD APPROACH
+=============================================================================================
 
 //processing <b>,<i>,<strike> tag
 class LittleInterPreter{
@@ -196,7 +201,7 @@ class LittleInterPreter{
             //process start by analysing each character in given line
             for(int i=0;i<Content.length();i++){
                      
-                     /* adding position of (*,_,~) in their repective variable as bold,italic,strike*/
+                     // adding position of (*,_,~) in their repective variable as bold,italic,strike
                     if((Content.charAt(i)=='*' && Content.charAt(i+1)=='*') || (Content.charAt(i)=='_' && Content.charAt(i+1)=='_'))
                     {   
                         bold.add(i);
@@ -218,7 +223,7 @@ class LittleInterPreter{
                     
             }   
             System.out.println(italic.size());
-           /*now processing each selected string from **some text** to <br>some text</br> */
+           //now processing each selected string from **some text** to <br>some text</br> 
             for(int j=0;j<bold.size();j+=4)
             {   
                 unformattedGroup.add(Content.substring(bold.get(j),(bold.get(j+3)+1)));
@@ -253,8 +258,48 @@ class LittleInterPreter{
     
    
 }
+*/
 
 
+/*
+============================================================================================
+                    NEW APPROACH
+============================================================================================
+*/
+
+class LittleInterPreter{
+    
+    private String markdown;
+    private String html;
+    
+    
+    // Contructor
+    LittleInterPreter(String m){
+        markdown = m;
+        processSyntax();
+    }
+    
+    // Load new markdown Syntax
+    public void load(String m){
+        markdown = m;
+        processSyntax();
+    }
+    
+    
+    // Syntax processor
+    private void processSyntax(){
+        
+        html = markdown.replaceAll("((?<=[^\\*])\\*(?=([^\\*\\n]+\\*)))|((?<=[^_])_(?=([^_\\n]+_)))", "<i>").replaceAll("((?<=(<i>[^\\*\\n]+))\\*(?=[^\\*]))|((?<=(<i>[^_\\n]+))_(?=[^_]))", "</i>").replaceAll("((?<=[^\\*])\\*{2}(?=([^\\*\\n]+\\*{2})))|((?<=[^_])_{2}(?=([^_\\n]+_{2})))", "<b>").replaceAll("((?<=(<b>[^\\*\\n]+))\\*{2}(?=[^\\*]))|((?<=(<b>[^_\\n]+))_{2}(?=[^_]))", "</b>").replaceAll("(?<=[^~])~{2}(?=([^~\\n]+~{2}))", "<strike>").replaceAll("(?<=(<strike>[^~\n]+))~{2}(?=[^~])", "</strike>");
+        
+        
+    }
+    
+    public String getHtml(){
+        return html;
+    }
+    
+    
+}
 
 
 // Heading Processor 
@@ -795,7 +840,7 @@ class ADMarkProcessor{
         
         /* Heading Expression */
         if (data.matches(HEADINGS_EXPRESSION)){
-            output_html += process_heading(data);
+            output_html += LittleInterpreter(process_heading(data));
            
         /* Code Snippet */
         }else if (data.matches(CODES_EXPRESSION)){
@@ -812,15 +857,15 @@ class ADMarkProcessor{
         
         /* Ordered List Processing */
         }else if(data.matches(OL_LIST_EXPRESSION)){
-            output_html += process_orderlist(data);
+            output_html += LittleInterpreter(process_orderlist(data));
         
         /* Unordered List */
         }else if(data.matches(UL_LIST_EXPRESSION)){
-            output_html += process_unorderlist(data);
+            output_html += LittleInterpreter(process_unorderlist(data));
         
         /* Table processor */
         }else if(data.matches(TABLE_EXPRESSION)){
-            output_html += process_tablecontent(data);
+            output_html += LittleInterpreter(process_tablecontent(data));
         
         /* Blockquote processor */
         }else if(data.matches(BLOCKQ_EXPRESSION)){
@@ -838,7 +883,7 @@ class ADMarkProcessor{
             
         }else {
             
-            output_html += String.format("<p> %s </p>\n", data);
+            output_html += String.format("<p> %s </p>\n", LittleInterpreter(data));
         }
     }
     
@@ -864,6 +909,12 @@ class ADMarkProcessor{
     =========================================================
     
     */
+    
+    private String LittleInterpreter(String data){
+        LittleInterPreter tmpobj = new LittleInterPreter(data);
+        return tmpobj.getHtml();
+        
+    }
     
     private String process_heading(String data){
         if(debug){
@@ -1008,7 +1059,7 @@ public class ADMark{
 	public String input_data; // Input Markdown Text
 	public String output_data; // Output HTML Source Code
     
-    private LittleInterPreter processedtext = new LittleInterPreter();
+    //private LittleInterPreter processedtext = new LittleInterPreter();
 	
     /* Constructor */
 	public ADMark(){
@@ -1017,7 +1068,7 @@ public class ADMark{
 		input_data = ReadFileData(input_file);
 		ADMarkProcessor obj = new ADMarkProcessor(input_data);
 		output_data = obj.getHTML(); 
-        output_data = processedtext.processSyntax(output_data);
+        //output_data = processedtext.processSyntax(output_data);
 		// Write Output
 		WriteFileData(output_file, output_data);
 	}
@@ -1026,7 +1077,7 @@ public class ADMark{
 		input_data = markdownContent;
 		ADMarkProcessor obj = new ADMarkProcessor(input_data);
 		output_data = obj.getHTML(); 
-        output_data = processedtext.processSyntax(output_data);
+        //output_data = processedtext.processSyntax(output_data);
 		// Write Output
 		WriteFileData(output_file, output_data);
 		return output_data;
