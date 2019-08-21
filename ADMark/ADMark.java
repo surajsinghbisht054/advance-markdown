@@ -283,15 +283,57 @@ class LittleInterPreter{
     public void load(String m){
         markdown = m;
         processSyntax();
+       
     }
     
     
     // Syntax processor
     private void processSyntax(){
+        LinkProcessor(markdown);
         
         html = markdown.replaceAll("((?<=[^\\*])\\*(?=([^\\*\\n]+\\*)))|((?<=[^_])_(?=([^_\\n]+_)))", "<i>").replaceAll("((?<=(<i>[^\\*\\n]+))\\*(?=[^\\*]))|((?<=(<i>[^_\\n]+))_(?=[^_]))", "</i>").replaceAll("((?<=[^\\*])\\*{2}(?=([^\\*\\n]+\\*{2})))|((?<=[^_])_{2}(?=([^_\\n]+_{2})))", "<b>").replaceAll("((?<=(<b>[^\\*\\n]+))\\*{2}(?=[^\\*]))|((?<=(<b>[^_\\n]+))_{2}(?=[^_]))", "</b>").replaceAll("(?<=[^~])~{2}(?=([^~\\n]+~{2}))", "<strike>").replaceAll("(?<=(<strike>[^~\n]+))~{2}(?=[^~])", "</strike>");
         
         
+    }
+
+    private void LinkProcessor(String data)
+    {
+        String LINK_EXPRESSION = "(\\[.+?\\]\\(.+?\\))";    
+        String text = "";   //store the text to be shown on link
+        String link ="";    //store the url 
+        String completeSyntax="";   //store complete syntax of image or link
+        
+        String[] tmp;   //used for storing or splitting text and link from data
+        
+         /* compile pattern */
+        Pattern pattern = Pattern.compile(LINK_EXPRESSION);
+        
+        /* match patterns */
+        Matcher match = pattern.matcher(data);
+        
+        /* Extract Data */
+        while(match.find()){
+           
+          
+            tmp = (data.substring(match.start(), match.end())).split("\\]\\(");
+            text = tmp[0].substring(1);
+            link = tmp[1].substring(0,tmp[1].length()-1);
+
+            if(data.charAt(match.start()-1)=='!'){
+                //image processing
+                completeSyntax = String.format(" <img width=\"700px\" src=\"%s\" alt=\"%s\" /> ",link,text);    
+                 markdown = markdown.replaceFirst("(!\\[.+?\\]\\(.+?\\))",completeSyntax);
+            }
+            else{
+                //simple link processing
+                completeSyntax = String.format(" <a href=\"%s\" >%s</a> ",link,text);
+                 markdown = markdown.replaceFirst("(\\[.+?\\]\\(.+?\\))",completeSyntax);
+            }
+           
+
+
+        }
+     
     }
     
     public String getHtml(){
@@ -300,7 +342,6 @@ class LittleInterPreter{
     
     
 }
-
 
 // Heading Processor 
 class HeadingProcessor 
@@ -1060,6 +1101,7 @@ public class ADMark{
 	public String output_data; // Output HTML Source Code
     
     //private LittleInterPreter processedtext = new LittleInterPreter();
+
 	
     /* Constructor */
 	public ADMark(){
@@ -1068,8 +1110,10 @@ public class ADMark{
 		input_data = ReadFileData(input_file);
 		ADMarkProcessor obj = new ADMarkProcessor(input_data);
 		output_data = obj.getHTML(); 
+        
         //output_data = processedtext.processSyntax(output_data);
 		// Write Output
+
 		WriteFileData(output_file, output_data);
 	}
 

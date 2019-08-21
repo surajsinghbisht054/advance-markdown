@@ -7,7 +7,7 @@
 # h1 Heading 
 ## h2 Heading {#this_is_id .classOne .classTwo font="Arial Size 12px"}
 ### h3 Heading {#anotherId}
-#### h4 Heading {.JustClass }
+#### h4 [Heading](hii) {.JustClass }
 ##### h5 _Heading_ { }
 ###### h6 Heading 
 
@@ -15,9 +15,8 @@
 ===
 
 
-### Heading Followed By Line Break
+### Heading Followed By **Line** Break
 ---
-
 
 
 /* 
