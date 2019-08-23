@@ -7,7 +7,7 @@
 # h1 Heading 
 ## h2 Heading {#this_is_id .classOne .classTwo font="Arial Size 12px"}
 ### h3 Heading {#anotherId}
-#### h4 [Heading](hii "ff  f") {.JustClass }
+#### h4 Heading {.JustClass }
 ##### h5 _Heading_ { }
 ###### h6 Heading 
 
@@ -17,9 +17,7 @@
 
 ### Heading Followed By **Line** Break
 ---
-https://www.himanshu.com
 
-hj [xxx](https://www.github.com "sojjjn")
 
 /* 
 
