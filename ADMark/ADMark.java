@@ -173,93 +173,6 @@ abstract class HTMLObject{
     protected abstract void parse_markdown();
 }
 
-/*
-==============================================================================================
-
-                                        OLD APPROACH
-=============================================================================================
-
-//processing <b>,<i>,<strike> tag
-class LittleInterPreter{
-  
-    
-
-    LittleInterPreter(){
-       
-    }
-
-    
-    public String processSyntax(String Content){
-
-            List<Integer> bold = new ArrayList<Integer>();              //for holding no and position of (*) in a line
-            List<Integer> italic = new ArrayList<Integer>();            //for holding no and position of (_) in a line
-            List<Integer> strike = new ArrayList<Integer>();            //for holding no and position of (~) in a line
-            List<String> unformattedGroup= new ArrayList<String>();     //this contains text to be replace with 
-            List<String> formattedGroup= new ArrayList<String>();        //this contains the replaced text
-            Content = Content + " ";
-
-            //process start by analysing each character in given line
-            for(int i=0;i<Content.length();i++){
-                     
-                     // adding position of (*,_,~) in their repective variable as bold,italic,strike
-                    if((Content.charAt(i)=='*' && Content.charAt(i+1)=='*') || (Content.charAt(i)=='_' && Content.charAt(i+1)=='_'))
-                    {   
-                        bold.add(i);
-                        bold.add(i+1);
-                                            
-                    }
-                    else if((Content.charAt(i)=='_' && Content.charAt(i+1)!= '_' && Content.charAt(i-1)!='_') || (Content.charAt(i)=='*' && Content.charAt(i+1)!= '*' && Content.charAt(i-1)!='*') )
-                    {
-                        italic.add(i);
-                        //italic.add(i+1);
-
-                    }
-                    else if(Content.charAt(i)=='~' && Content.charAt(i+1)=='~')
-                    {
-                        strike.add(i);
-                        strike.add(i+1);
-
-                    }
-                    
-            }   
-            System.out.println(italic.size());
-           //now processing each selected string from **some text** to <br>some text</br> 
-            for(int j=0;j<bold.size();j+=4)
-            {   
-                unformattedGroup.add(Content.substring(bold.get(j),(bold.get(j+3)+1)));
-                formattedGroup.add("<b>"+(Content.substring((bold.get(j+1)+1),(bold.get(j+3)-1)))+"</b>");
-                
-            }
-            for(int j=0;j<italic.size();j+=2)
-            {   
-                unformattedGroup.add(Content.substring(italic.get(j),(italic.get(j+1)+1)));
-                formattedGroup.add("<i>"+(Content.substring((italic.get(j)+1),(italic.get(j+1))))+"</i>");
-                
-            }
-            for(int j=0;j<strike.size();j+=4)
-            {   
-                unformattedGroup.add(Content.substring(strike.get(j),(strike.get(j+3)+1)));
-                formattedGroup.add("<strike>"+(Content.substring((strike.get(j+1)+1),(strike.get(j+3)-1)))+"</strike>");
-                
-            }
-           
-
-            //replacing text with formated text
-            for(int i=0;i<formattedGroup.size();i++)
-            {     
-                Content=Content.replace(unformattedGroup.get(i),formattedGroup.get(i)); 
-
-            }
-        
-           
-            return Content;
-
-    }
-    
-   
-}
-*/
-
 
 /*
 ============================================================================================
@@ -289,8 +202,10 @@ class LittleInterPreter{
     
     // Syntax processor
     private void processSyntax(){
+        // To Process Link
         LinkProcessor(markdown);
-        
+
+        // To Handling Italic, Bold, Strike Functionality
         html = markdown.replaceAll("((?<=[^\\*])\\*(?=([^\\*\\n]+\\*)))|((?<=[^_])_(?=([^_\\n]+_)))", "<i>").replaceAll("((?<=(<i>[^\\*\\n]+))\\*(?=[^\\*]))|((?<=(<i>[^_\\n]+))_(?=[^_]))", "</i>").replaceAll("((?<=[^\\*])\\*{2}(?=([^\\*\\n]+\\*{2})))|((?<=[^_])_{2}(?=([^_\\n]+_{2})))", "<b>").replaceAll("((?<=(<b>[^\\*\\n]+))\\*{2}(?=[^\\*]))|((?<=(<b>[^_\\n]+))_{2}(?=[^_]))", "</b>").replaceAll("(?<=[^~])~{2}(?=([^~\\n]+~{2}))", "<strike>").replaceAll("(?<=(<strike>[^~\n]+))~{2}(?=[^~])", "</strike>");
         
         
