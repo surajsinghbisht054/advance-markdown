@@ -7,7 +7,7 @@
 # h1 Heading 
 ## h2 Heading {#this_is_id .classOne .classTwo font="Arial Size 12px"}
 ### h3 Heading {#anotherId}
-#### h4 [Heading](hii) {.JustClass }
+#### h4 [Heading](hii "ff  f") {.JustClass }
 ##### h5 _Heading_ { }
 ###### h6 Heading 
 
@@ -17,7 +17,9 @@
 
 ### Heading Followed By **Line** Break
 ---
+https://www.himanshu.com
 
+hj [xxx](https://www.github.com "sojjjn")
 
 /* 
 
@@ -263,7 +265,6 @@ Markdown | Less | Pretty
 
 
 
-/*
 
 
 [ Table Code Section ](END)
@@ -328,7 +329,7 @@ Autoconverted link https://github.com/nodeca/pica (enable linkify to see)
 ## Images
 
 ![Minion](https://octodex.github.com/images/minion.png)
-![Stormtroopocat](https://octodex.github.com/images/stormtroopocat.jpg "The Stormtroopocat")
+![Stormtroopocat](https://octodex.github.com/images/stormtroopocat.jpg)
 
 Like links, Images also have a footnote style syntax
 
