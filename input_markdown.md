@@ -85,14 +85,14 @@ console.log(foo(5));
 */
 
 + Create a list by starting a line with `+`, `-`, or `*` {#this_is_for_table .thisIsfortable }
-+ Sub-lists are made by indenting 2 spaces:{#this_is_for_row_One}
-    * Marker character change forces new list start: {#this_is_Again_For_Table}
++ Sub-lists are made by __indenting__ 2 spaces:{#this_is_for_row_One}
+    * Marker character change **forces** new list start: {#this_is_Again_For_Table}
     * Ac tristique libero volutpat at {#this_is_for_row_One}
-        + Facilisis in pretium nisl aliquet {#this_is_for_table}
+        + Facilisis in _pretium_ nisl aliquet {#this_is_for_table}
         * Ac tristique libero volutpat at {#this_is_for_row_two}
         * Ac tristique libero volutpat at {#this_is_for_row_three}
     * Just checking again\n- Nulla volutpat aliquam velit
-    * Ac tristique libero volutpat at {#work }
+    * Ac tristique *libero* volutpat at {#work }
     * Ac tristique libero volutpat at {#work2 }
 + Very easy!
 
@@ -101,7 +101,7 @@ console.log(foo(5));
 Simple ordered table
 
 5. foo{#works}
-1. bar
+1. __bar__
 1. works
 
 Nested Ordered Table
@@ -173,7 +173,7 @@ Start numbering with offset:
 
 > This is the first level of quoting.
 > is it here
-> > This is nested blockquote.
+>> This is nested blockquote.
 > yes
 > Back to the first level.
 
@@ -221,9 +221,6 @@ Start numbering with offset:
 
 .....
 <h1>Heading 1</h1>
-<h2>Heading 2</h2>
-<h3>Heading 3</h3>
-<h4>Heading 4</h4>
 <h5>Heading 5</h5>
 <h6>Heading 6</h6> 
 .....
@@ -244,15 +241,15 @@ Start numbering with offset:
 | Option | Description |
 | ------ | ----------- |
 | data   | path to data files to supply the data that will be passed into templates. |
-| engine | engine to be used for processing templates. Handlebars is the default. |
+| engine | engine to be used for processing templates. Handlebars is _the_ default. |
 | ext    | extension to be used for dest files. |
 
 Right aligned columns
 
 | Option | Description |
 | ------:| -----------:|
-| data   | path to data files to supply the data that will be passed into templates. |
-| engine | engine to be used for processing templates. Handlebars is the default. |
+| data   | path to data files to supply the **data that will be passed** into templates. |
+| engine | __engine to be used for processing__ templates. Handlebars is the default. |
 | ext    | extension to be used for dest files. |
 
 

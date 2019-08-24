@@ -57,8 +57,10 @@ abstract class HTMLObject{
     protected String property[];  // To Store CSS and Other HTML Properties
     protected String content[];   // To Store Content
     protected String html;        // Output HTML Tag Variable
-    protected String markdown;    // Input Markdown 
-    
+    protected String markdown;    // Input Markdown
+
+
+    protected LittleInterPreter little_interpre_obj = new LittleInterPreter(); 
     public boolean debug = true;   // Debug Trigger
     
     
@@ -171,6 +173,13 @@ abstract class HTMLObject{
     
     /* to convert markdown to object */
     protected abstract void parse_markdown();
+
+
+    protected String LittleInterpreter(String data){
+        little_interpre_obj.load(data);
+        return little_interpre_obj.getHtml();
+        
+    }
 }
 
 
@@ -184,6 +193,11 @@ class LittleInterPreter{
     
     private String markdown;
     private String html;
+
+    //
+    LittleInterPreter(){
+        // Now, You have to use load function..
+    }
     
     
     // Contructor
@@ -203,11 +217,12 @@ class LittleInterPreter{
     // Syntax processor
     private void processSyntax(){
         // To Process Link
-        LinkProcessor(markdown);
+        //LinkProcessor(markdown);
 
         // To Handling Italic, Bold, Strike Functionality
-        html = markdown.replaceAll("((?<=[^\\*])\\*(?=([^\\*\\n]+\\*)))|((?<=[^_])_(?=([^_\\n]+_)))", "<i>").replaceAll("((?<=(<i>[^\\*\\n]+))\\*(?=[^\\*]))|((?<=(<i>[^_\\n]+))_(?=[^_]))", "</i>").replaceAll("((?<=[^\\*])\\*{2}(?=([^\\*\\n]+\\*{2})))|((?<=[^_])_{2}(?=([^_\\n]+_{2})))", "<b>").replaceAll("((?<=(<b>[^\\*\\n]+))\\*{2}(?=[^\\*]))|((?<=(<b>[^_\\n]+))_{2}(?=[^_]))", "</b>").replaceAll("(?<=[^~])~{2}(?=([^~\\n]+~{2}))", "<strike>").replaceAll("(?<=(<strike>[^~\n]+))~{2}(?=[^~])", "</strike>");
-        
+        html = markdown.replaceAll("((?<=[^\\*])\\*(?=([^\\*\\n]+\\*)))|((?<=[^_])_(?=([^_\\n]+_)))", "<i>").replaceAll("((?<=(<i>[^\\*\\n]+))\\*(?=[^\\*]))|((?<=(<i>[^_\\n]+))_(?=[^_]))", "</i>").replaceAll("((?<=[^\\*])\\*{2}(?=([^\\*\\n]+\\*{2})))|((?<=[^_])_{2}(?=([^_\\n]+_{2})))", "<b>").replaceAll("((?<=(<b>[^\\*\\n]+))\\*{2}(?=[^\\*]))|((?<=(<b>[^_\\n]+))_{2}(?=[^_]))", "</b>").replaceAll("(?<=[^~])~{2}(?=([^~\\n]+~{2}))", "<strike>").replaceAll("(?<=(<strike>[^~\n]+))~{2}(?=[^~])", "</strike>"); //.replaceAll("(?<=[^`])`(?=([^`\\n]+`))", "<code>").replaceAll("(?<=(<code>[^`\n]+))`(?=[^`])","</code>");
+        //html = markdown.replaceAll("((?<=[^\\*])\\*(?=([^\\*\\n]+?\\*)))|((?<=[^_])_(?=([^_\\n]+?_)))", "<i>").replaceAll("((?<=(<i>[^\\*\\n]+?))\\*(?=[^\\*]))|((?<=(<i>[^_\\n]+?))_(?=[^_]))", "</i>").replaceAll("((?<=[^\\*])\\*{2}(?=([^\\*\\n]+?\\*{2})))|((?<=[^_])_{2}(?=([^_\\n]+?_{2})))", "<b>").replaceAll("((?<=(<b>[^\\*\\n]+?))\\*{2}(?=[^\\*]))|((?<=(<b>[^_\\n]+?))_{2}(?=[^_]))", "</b>").replaceAll("(?<=[^~])~{2}(?=([^~\\n]+?~{2}))", "<strike>").replaceAll("(?<=(<strike>[^~\\n]+?))~{2}(?=[^~])", "</strike>"); //.replaceAll("(?<=[^`])`(?=([^`\\n]+`))", "<code>").replaceAll("(?<=(<code>[^`\n]+))`(?=[^`])","</code>");
+        //html = markdown; 
         
     }
 
@@ -302,7 +317,7 @@ class HeadingProcessor
             tag = String.format(tag, match.group(1).length());
             
             // Content Parser
-            content = new String[]{match.group(2)};
+            content = new String[]{LittleInterpreter(match.group(2))};
             
            
 
@@ -314,6 +329,7 @@ class HeadingProcessor
                                  tag,
                                  String.join(" ", property),
                                  String.join(" ", content),
+                                 //LittleInterpreter(String.join(" ", content)),
                                  tag);
         }   
     }
@@ -452,7 +468,7 @@ class ListProcessor
                     unorderlist.add(true);
                 }
                 nodelist.add(x.split("\\+|\\-|\\*|\\d")[0].length()/4);
-                contentlist.add(match.group(2));
+                contentlist.add(LittleInterpreter(match.group(2)));
                 propertylist.add(String.join(" ", property_parser(match.group(3))));
             }
         }
@@ -572,7 +588,7 @@ class BlockQuoteProcessor
             if(match.find()){
             
                 nodelist.add(match.group(1).length());
-                contentlist.add(match.group(2));
+                contentlist.add(LittleInterpreter(match.group(2)));
                 propertylist.add(String.join(" ", property_parser(match.group(3))));
             }
         }
@@ -693,7 +709,7 @@ class TableProcessor
             }
             
             // Add Table Heading tags
-            htmltags.add(String.format("<th> %s </th>", r));
+            htmltags.add(String.format("<th> %s </th>", LittleInterpreter(r)));
         }
         htmltags.add("</tr>");
         
@@ -717,7 +733,7 @@ class TableProcessor
             if(dcell.equals("")){
                 continue;
             }
-            htmltags.add(String.format("<td> %s </td>", dcell)); 
+            htmltags.add(String.format("<td> %s </td>", LittleInterpreter(dcell))); 
             
             }
 
@@ -814,7 +830,7 @@ class ADMarkProcessor{
         
         /* Heading Expression */
         if (data.matches(HEADINGS_EXPRESSION)){
-            output_html += LittleInterpreter(process_heading(data));
+            output_html += process_heading(data);
            
         /* Code Snippet */
         }else if (data.matches(CODES_EXPRESSION)){
@@ -831,15 +847,15 @@ class ADMarkProcessor{
         
         /* Ordered List Processing */
         }else if(data.matches(OL_LIST_EXPRESSION)){
-            output_html += LittleInterpreter(process_orderlist(data));
+            output_html += process_orderlist(data);
         
         /* Unordered List */
         }else if(data.matches(UL_LIST_EXPRESSION)){
-            output_html += LittleInterpreter(process_unorderlist(data));
+            output_html += process_unorderlist(data);
         
         /* Table processor */
         }else if(data.matches(TABLE_EXPRESSION)){
-            output_html += LittleInterpreter(process_tablecontent(data));
+            output_html += process_tablecontent(data);
         
         /* Blockquote processor */
         }else if(data.matches(BLOCKQ_EXPRESSION)){
@@ -857,7 +873,7 @@ class ADMarkProcessor{
             
         }else {
             
-            output_html += LittleInterpreter(String.format("<p> %s </p>\n",data));
+            output_html += String.format("<p> %s </p>\n",LittleInterpreter(data));
         }
     }
     
@@ -922,7 +938,7 @@ class ADMarkProcessor{
     }
     private String process_codes(String data){
         if(debug){
-            System.out.println(String.format("<code> %s </code>", data));
+            System.out.println(String.format("<pre><code> %s </code></pre>", data));
         }
         // Code
 		converter = new CodeProcessor();
