@@ -217,7 +217,8 @@ class LittleInterPreter{
     // Syntax processor
     private void processSyntax(){
         // To Process Link
-        //LinkProcessor(markdown);
+       // System.out.println(markdown);
+        LinkProcessor(markdown);
 
         // To Handling Italic, Bold, Strike Functionality
         html = markdown.replaceAll("((?<=[^\\*])\\*(?=([^\\*\\n]+\\*)))|((?<=[^_])_(?=([^_\\n]+_)))", "<i>").replaceAll("((?<=(<i>[^\\*\\n]+))\\*(?=[^\\*]))|((?<=(<i>[^_\\n]+))_(?=[^_]))", "</i>").replaceAll("((?<=[^\\*])\\*{2}(?=([^\\*\\n]+\\*{2})))|((?<=[^_])_{2}(?=([^_\\n]+_{2})))", "<b>").replaceAll("((?<=(<b>[^\\*\\n]+))\\*{2}(?=[^\\*]))|((?<=(<b>[^_\\n]+))_{2}(?=[^_]))", "</b>").replaceAll("(?<=[^~])~{2}(?=([^~\\n]+~{2}))", "<strike>").replaceAll("(?<=(<strike>[^~\n]+))~{2}(?=[^~])", "</strike>"); //.replaceAll("(?<=[^`])`(?=([^`\\n]+`))", "<code>").replaceAll("(?<=(<code>[^`\n]+))`(?=[^`])","</code>");
@@ -228,8 +229,8 @@ class LittleInterPreter{
 
     private void LinkProcessor(String data)
     {
-        String LINK_EXPRESSION = "(\\[.+?\\]\\(.+?\\))|((?<=[^\\(])\\w+://\\w+?\\.\\w+?\\.\\w+)|((?<=[^\\(])\\w+://\\w+?\\.\\S+)";    
-        String TITLE_EXPRESSION = "(&quot;.+&quot;)";
+        String LINK_EXPRESSION = "(!\\[.+?\\]\\(.+?\\))|(\\[.+?\\]\\(.+?\\))|((?<=[^\\(])\\w+://\\w+?\\.\\w+?\\.\\S+)|((?<=[^\\(])\\w+://\\w+?\\.\\S+)";    
+       // String TITLE_EXPRESSION = "(&quot;.+&quot;)";
         String text = "";   //store the text to be shown on link
         String link ="";    //store the url 
         String completeSyntax="";   //store complete syntax of image or link
@@ -245,7 +246,7 @@ class LittleInterPreter{
         
         /* Extract Data */
         while(match.find()){
-           
+            
           
             tmp = (data.substring(match.start(), match.end())).split("\\]\\(");
             
@@ -256,7 +257,7 @@ class LittleInterPreter{
 
                 if(tmp2.length>1)
                 {
-                    title = tmp2[1].replaceAll("&quot;","");
+                    title = tmp2[1].replaceAll("\"","");
 
                 }
             }else if(tmp.length<2){
@@ -265,19 +266,28 @@ class LittleInterPreter{
                 title = "";
             }
             
+           
+           
 
-            
-            if(data.charAt(match.start()-1)=='!'){
-                //image processing
-                completeSyntax = String.format(" <img width=\"200px\" src=\"%s\" alt=\"%s\" title=\"%s\" /> ",link,text,title);    
-                 markdown = markdown.replaceFirst("(!\\[.+?\\]\\(.+?\\))",completeSyntax);
+            if(data.charAt(match.start())>0){ 
+               if(data.charAt(match.start())=='!'){
+                    //image processing
+                    completeSyntax = String.format(" <img width=\"200px\" src=\"%s\" alt=\"%s\" title=\"%s\" /> ",link,text,title);    
+                     markdown = markdown.replaceFirst("(!\\[.+?\\]\\(.+?\\))",completeSyntax);
+                }
+                else{
+                    //simple link processing
+                    completeSyntax = String.format(" <a href=\"%s\" title=\"%s\" >%s</a> ",link,title,text);
+
+                    markdown = markdown.replaceFirst("(\\[.+?\\]\\(.+?\\))|((?<=[^\\(])\\w+://\\w+?\\.\\w+?\\.\\w+)|((?<=[^\\(])\\w+://\\w+?\\.\\S+)",completeSyntax);
+
+                }
             }
             else{
                 //simple link processing
                 completeSyntax = String.format(" <a href=\"%s\" title=\"%s\" >%s</a> ",link,title,text);
                  markdown = markdown.replaceFirst("(\\[.+?\\]\\(.+?\\))|((?<=[^\\(])\\w+://\\w+?\\.\\w+?\\.\\w+)|((?<=[^\\(])\\w+://\\w+?\\.\\S+)",completeSyntax);
             }
-           
 
 
         }
