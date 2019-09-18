@@ -175,12 +175,89 @@ abstract class HTMLObject{
     protected abstract void parse_markdown();
 
 
-    protected String LittleInterpreter(String data){
+    /*protected String LittleInterpreter(String data){
         little_interpre_obj.load(data);
         return little_interpre_obj.getHtml();
         
-    }
+    }*/
 }
+
+/*
+==============================================================================================
+                                        OLD APPROACH
+=============================================================================================
+//processing <b>,<i>,<strike> tag
+class LittleInterPreter{
+  
+    
+    LittleInterPreter(){
+       
+    }
+    
+    public String processSyntax(String Content){
+            List<Integer> bold = new ArrayList<Integer>();              //for holding no and position of (*) in a line
+            List<Integer> italic = new ArrayList<Integer>();            //for holding no and position of (_) in a line
+            List<Integer> strike = new ArrayList<Integer>();            //for holding no and position of (~) in a line
+            List<String> unformattedGroup= new ArrayList<String>();     //this contains text to be replace with 
+            List<String> formattedGroup= new ArrayList<String>();        //this contains the replaced text
+            Content = Content + " ";
+            //process start by analysing each character in given line
+            for(int i=0;i<Content.length();i++){
+                     
+                     // adding position of (*,_,~) in their repective variable as bold,italic,strike
+                    if((Content.charAt(i)=='*' && Content.charAt(i+1)=='*') || (Content.charAt(i)=='_' && Content.charAt(i+1)=='_'))
+                    {   
+                        bold.add(i);
+                        bold.add(i+1);
+                                            
+                    }
+                    else if((Content.charAt(i)=='_' && Content.charAt(i+1)!= '_' && Content.charAt(i-1)!='_') || (Content.charAt(i)=='*' && Content.charAt(i+1)!= '*' && Content.charAt(i-1)!='*') )
+                    {
+                        italic.add(i);
+                        //italic.add(i+1);
+                    }
+                    else if(Content.charAt(i)=='~' && Content.charAt(i+1)=='~')
+                    {
+                        strike.add(i);
+                        strike.add(i+1);
+                    }
+                    
+            }   
+            System.out.println(italic.size());
+           //now processing each selected string from **some text** to <br>some text</br> 
+            for(int j=0;j<bold.size();j+=4)
+            {   
+                unformattedGroup.add(Content.substring(bold.get(j),(bold.get(j+3)+1)));
+                formattedGroup.add("<b>"+(Content.substring((bold.get(j+1)+1),(bold.get(j+3)-1)))+"</b>");
+                
+            }
+            for(int j=0;j<italic.size();j+=2)
+            {   
+                unformattedGroup.add(Content.substring(italic.get(j),(italic.get(j+1)+1)));
+                formattedGroup.add("<i>"+(Content.substring((italic.get(j)+1),(italic.get(j+1))))+"</i>");
+                
+            }
+            for(int j=0;j<strike.size();j+=4)
+            {   
+                unformattedGroup.add(Content.substring(strike.get(j),(strike.get(j+3)+1)));
+                formattedGroup.add("<strike>"+(Content.substring((strike.get(j+1)+1),(strike.get(j+3)-1)))+"</strike>");
+                
+            }
+           
+            //replacing text with formated text
+            for(int i=0;i<formattedGroup.size();i++)
+            {     
+                Content=Content.replace(unformattedGroup.get(i),formattedGroup.get(i)); 
+            }
+        
+           
+            return Content;
+    }
+    
+   
+}
+*/
+
 
 
 /*
@@ -191,10 +268,25 @@ abstract class HTMLObject{
 
 class LittleInterPreter{
     
-    private String markdown;
-    private String html;
+    private String markdown;            //string markdown data
+    private String html;                //storing html data
+    private StringBuilder tmpdata;      //store temporarilary store markdown data just for processing 
+    private List<Integer> linkStartPoint = new ArrayList<Integer>();     
+    private List<Integer> linkEndPoint = new ArrayList<Integer>();
+    private List<Integer> emphasisStartPoint = new ArrayList<Integer>();
+    private List<Integer> emphasisEndPoint = new ArrayList<Integer>();
 
-    //
+    private String BOLD_EXPRESSION = "((\\*\\*.+?\\*\\*)|(\\_\\_.+?\\_\\_))";
+    private String ITALIC_EXPRESSION = "(((?<=[^\\*])\\*(?=[^\\*]).+?(?<=[^\\*])\\*(?=[^\\*]))|((?<=[^\\_])\\_(?=[^\\_]).+?(?<=[^\\_])\\_))";
+    private String MIX_EXPRESSION = "(((?<=[^\\*])\\*_(?=[^\\*]).+?(?<=[^\\*])_\\*(?=[^\\*])))";
+    private String STRIKE_EXPRESSION = "((~~.+?~~))";
+    private String LINK_EXPRESSION = "(!\\[.+?\\]\\(.+?\\))|(\\[.+?\\]\\(.+?\\))|(\\w+://\\w+\\.\\w+\\.\\S+)|(\\w+://\\w+\\.\\S+)";
+    private String EMPASIS_EXPRESSION = String.join("|",BOLD_EXPRESSION,ITALIC_EXPRESSION,STRIKE_EXPRESSION,MIX_EXPRESSION);
+    private String COMMENTS_EXPRESSION = "(/\\*[\\s\\S]+?\\*/)";
+    private String STYLEPROPERTY_EXPRESSION = "(<.+?>)";
+    private String EXP = String.join("|",COMMENTS_EXPRESSION,STYLEPROPERTY_EXPRESSION,LINK_EXPRESSION,EMPASIS_EXPRESSION);
+    private String EMPASIS_EXPRESSION2 = String.join("|",BOLD_EXPRESSION,STRIKE_EXPRESSION,"((\\*_.+?_\\*))","((\\*(?=[^\\*]).+?(?<=[^\\*])\\*)|(\\_(?=[^\\_]).+?(?<=[^\\_])\\_))");
+    
     LittleInterPreter(){
         // Now, You have to use load function..
     }
@@ -202,14 +294,16 @@ class LittleInterPreter{
     
     // Contructor
     LittleInterPreter(String m){
-        markdown = m;
+        html = m;
         processSyntax();
     }
     
     // Load new markdown Syntax
     public void load(String m){
-        markdown = m;
+        html = m;
+        //System.out.println(markdown);
         processSyntax();
+
        
     }
     
@@ -218,38 +312,173 @@ class LittleInterPreter{
     private void processSyntax(){
         // To Process Link
        // System.out.println(markdown);
-        LinkProcessor(markdown);
+       
+        tmpdata = new StringBuilder(html);
+        
+        
+         /* compile pattern */
+            Pattern pattern = Pattern.compile(EXP);
 
-        // To Handling Italic, Bold, Strike Functionality
-        html = markdown.replaceAll("((?<=[^\\*])\\*(?=([^\\*\\n]+\\*)))|((?<=[^_])_(?=([^_\\n]+_)))", "<i>").replaceAll("((?<=(<i>[^\\*\\n]+))\\*(?=[^\\*]))|((?<=(<i>[^_\\n]+))_(?=[^_]))", "</i>").replaceAll("((?<=[^\\*])\\*{2}(?=([^\\*\\n]+\\*{2})))|((?<=[^_])_{2}(?=([^_\\n]+_{2})))", "<b>").replaceAll("((?<=(<b>[^\\*\\n]+))\\*{2}(?=[^\\*]))|((?<=(<b>[^_\\n]+))_{2}(?=[^_]))", "</b>").replaceAll("(?<=[^~])~{2}(?=([^~\\n]+~{2}))", "<strike>").replaceAll("(?<=(<strike>[^~\n]+))~{2}(?=[^~])", "</strike>"); //.replaceAll("(?<=[^`])`(?=([^`\\n]+`))", "<code>").replaceAll("(?<=(<code>[^`\n]+))`(?=[^`])","</code>");
-        //html = markdown.replaceAll("((?<=[^\\*])\\*(?=([^\\*\\n]+?\\*)))|((?<=[^_])_(?=([^_\\n]+?_)))", "<i>").replaceAll("((?<=(<i>[^\\*\\n]+?))\\*(?=[^\\*]))|((?<=(<i>[^_\\n]+?))_(?=[^_]))", "</i>").replaceAll("((?<=[^\\*])\\*{2}(?=([^\\*\\n]+?\\*{2})))|((?<=[^_])_{2}(?=([^_\\n]+?_{2})))", "<b>").replaceAll("((?<=(<b>[^\\*\\n]+?))\\*{2}(?=[^\\*]))|((?<=(<b>[^_\\n]+?))_{2}(?=[^_]))", "</b>").replaceAll("(?<=[^~])~{2}(?=([^~\\n]+?~{2}))", "<strike>").replaceAll("(?<=(<strike>[^~\\n]+?))~{2}(?=[^~])", "</strike>"); //.replaceAll("(?<=[^`])`(?=([^`\\n]+`))", "<code>").replaceAll("(?<=(<code>[^`\n]+))`(?=[^`])","</code>");
-        //html = markdown; 
+            /* match patterns */
+            Matcher match = pattern.matcher(tmpdata);
+            int i=1;
+            while(match.find())
+            {
+                String data = tmpdata.substring(match.start(), match.end());
+                
+                if(data.matches(EMPASIS_EXPRESSION2))
+                {   
+                   /* if(data.matches(BOLD_EXPRESSION))
+                        System.out.println("BOLD empasis processed");
+                    else if(data.matches(STRIKE_EXPRESSION))
+                        System.out.println("Strike EMpasis processor");
+                    else if(data.matches("((\\*_.+?_\\*))"))
+                        System.out.println("Mix Empasis processor");
+                    else if(data.matches("((\\*(?=[^\\*]).+?(?<=[^\\*])\\*)|(\\_(?=[^\\_]).+?(?<=[^\\_])\\_))"))
+                        System.out.println("Itlaic Empasis processor");
+                    */
+
+                   // System.out.println(i+" . points = "+match.start()+":: "+match.end()+"::"+data);
+                    emphasisStartPoint.add(match.start());
+                    emphasisEndPoint.add(match.end());
+
+                    i++;
+                    //System.out.println(data);
+                    //EmphasisProcessor(data);    
+
+                }
+              
+                
+            }
+             //System.out.println("length of emphasisStartPoint points:"+emphasisStartPoint.size());
+             for(int j=emphasisStartPoint.size()-1;j>=0;j--)
+                {   
+                    //System.out.println("data:"+tmpdata.substring(linkStartPoint.get(j),linkEndPoint.get(j)));
+                    EmphasisProcessor(tmpdata.substring(emphasisStartPoint.get(j),emphasisEndPoint.get(j)),emphasisStartPoint.get(j),emphasisEndPoint.get(j));
+                }
+                   emphasisStartPoint.clear();
+                   emphasisEndPoint.clear();
+            
+            /*link processed*/
+ 
+            /* match patterns */
+            match = pattern.matcher(tmpdata);
+             i=1;
+        while(match.find())
+        {
+            String data = tmpdata.substring(match.start(), match.end());
+            //System.out.println(data);
+
+            if(data.matches(LINK_EXPRESSION))
+            {   
+                //System.out.println("linkProcessor");
+                //System.out.println(i+" . points = "+match.start()+":: "+match.end()+"::"+data);
+                linkStartPoint.add(match.start());
+                linkEndPoint.add(match.end());
+                i++;
+                //LinkProcessor(data);
+                //LINKDATA = LINKDATA+data;
+            }
+           
+        }
+        //System.out.println("length of linkStartPoint points:"+linkStartPoint.size());
+        for(int j=linkStartPoint.size()-1;j>=0;j--)
+        {   
+            //System.out.println("data:"+tmpdata.substring(linkStartPoint.get(j),linkEndPoint.get(j)));
+            LinkProcessor(tmpdata.substring(linkStartPoint.get(j),linkEndPoint.get(j)),linkStartPoint.get(j),linkEndPoint.get(j));
+        }
+        linkStartPoint.clear();
+        linkEndPoint.clear();
+       
         
     }
-
-    private void LinkProcessor(String data)
+    private void EmphasisProcessor(String data,int start,int end)
     {
-        String LINK_EXPRESSION = "(!\\[.+?\\]\\(.+?\\))|(\\[.+?\\]\\(.+?\\))|((?<=[^\\(])\\w+://\\w+?\\.\\w+?\\.\\S+)|((?<=[^\\(])\\w+://\\w+?\\.\\S+)";    
-       // String TITLE_EXPRESSION = "(&quot;.+&quot;)";
+        /* (((?<=[\*])\*)|((?<=[\_])\_))
+
+            (((?<=[^\*])\*(?=[^\*]))|((?<=[^\_])\_(?=[^\_])))
+
+            (((?<=[~])~)|((?<=[~])~))
+            /*******************************************
+            [+]((?<=[^\*])\*(?=[^\*]).+(?<=[^\*])\*)
+            [+](\*\*.+\*\*)
+            [+](~~.+~~)
+            *********************************************
+         */
+            
+           /* String BOLD_EXPRESSION = "((\\*\\*.+?\\*\\*)|(\\_\\_.+?\\_\\_))";
+            String ITALIC_EXPRESSION = "(((?<=[^\\*])\\*(?=[^\\*]).+?(?<=[^\\*])\\*(?=[^\\*]))|((?<=[^\\_])\\_(?=[^\\_]).+?(?<=[^\\_])\\_))";
+            String STRIKE_EXPRESSION = "((~~.+?~~))";*/
+           
+           
+            String formatedString= "";
+            String tmp = data;
+           
+           do
+           {
+
+                if(tmp.matches(BOLD_EXPRESSION))
+                {
+                    formatedString = String.format("<b> %s </b>",tmp.substring(2,tmp.length()-2));
+                    data = data.replace(tmp,formatedString);
+                }
+                else if(tmp.matches(STRIKE_EXPRESSION))
+                {
+                    formatedString = String.format("<strike> %s </strike>",tmp.substring(2,tmp.length()-2));
+                    data = data.replace(tmp,formatedString);
+                }
+                else if(tmp.matches("((\\*_.+?_\\*))"))
+                {
+                    formatedString = String.format("<i><b> %s </b></i>",tmp.substring(2,tmp.length()-2));
+                    data = data.replace(tmp,formatedString);      
+                }
+                else if(tmp.matches("((\\*(?=[^\\*]).+?(?<=[^\\*])\\*)|(\\_(?=[^\\_]).+?(?<=[^\\_])\\_))"))
+                {
+                    formatedString = String.format("<i> %s </i>",tmp.substring(1,tmp.length()-1));
+                    data = data.replace(tmp,formatedString);   
+                }
+                
+            
+                /* compile pattern */
+                Pattern pattern = Pattern.compile(EMPASIS_EXPRESSION);
+
+                /* match patterns */
+                Matcher match = pattern.matcher(data);
+
+                 
+                    if(match.find()){
+                        tmp = data.substring(match.start(),match.end());
+                    }
+                    else
+                        tmp = "";
+                 
+
+
+           }while(tmp.matches(EMPASIS_EXPRESSION2));
+           //System.out.println(data);
+           tmpdata = tmpdata.replace(start,end,data);
+
+            
+               
+           
+
+    }
+    private void LinkProcessor(String data,int start,int end)
+    {
+       
+       // String LINK_EXPRESSION = "(!\\[.+?\\]\\(.+?\\))|(\\[.+?\\]\\(.+?\\))|(\\w+://\\w+\\.\\w+\\.\\S+)|(\\w+://\\w+\\.\\S+)";    
+       
         String text = "";   //store the text to be shown on link
         String link ="";    //store the url 
         String completeSyntax="";   //store complete syntax of image or link
         String title = "";
         String[] tmp2;  //used to store url and title
         String[] tmp;   //used for storing or splitting text and link from data
-        
-         /* compile pattern */
-        Pattern pattern = Pattern.compile(LINK_EXPRESSION);
-
-        /* match patterns */
-        Matcher match = pattern.matcher(data);
-        
-        /* Extract Data */
-        while(match.find()){
-            
-          
-            tmp = (data.substring(match.start(), match.end())).split("\\]\\(");
-            
+        String tmp3;
+        //System.out.println(start+"::"+end+":: "+data);
+       
+            tmp = data.split("\\]\\(");
+           
             if(tmp.length>1){
                 text = tmp[0].substring(1);
                 tmp2 = tmp[1].substring(0,tmp[1].length()-1).split(" ",2);
@@ -269,32 +498,37 @@ class LittleInterPreter{
            
            
 
-            if(data.charAt(match.start())>0){ 
-               if(data.charAt(match.start())=='!'){
+            if(tmp.length>1){ 
+               if(data.charAt(0)/*(match.start())*/=='!'){
                     //image processing
+                    //text.replaceFirst("[","");
                     completeSyntax = String.format(" <img width=\"200px\" src=\"%s\" alt=\"%s\" title=\"%s\" /> ",link,text,title);    
-                     markdown = markdown.replaceFirst("(!\\[.+?\\]\\(.+?\\))",completeSyntax);
+                    tmpdata = tmpdata.replace(start,end,completeSyntax);
                 }
                 else{
                     //simple link processing
+                 
                     completeSyntax = String.format(" <a href=\"%s\" title=\"%s\" >%s</a> ",link,title,text);
-
-                    markdown = markdown.replaceFirst("(\\[.+?\\]\\(.+?\\))|((?<=[^\\(])\\w+://\\w+?\\.\\w+?\\.\\w+)|((?<=[^\\(])\\w+://\\w+?\\.\\S+)",completeSyntax);
-
+                   
+                    tmpdata = tmpdata.replace(start,end,completeSyntax);
+                   
                 }
-            }
+           }
             else{
                 //simple link processing
+                //System.out.println("hahaha");
                 completeSyntax = String.format(" <a href=\"%s\" title=\"%s\" >%s</a> ",link,title,text);
-                 markdown = markdown.replaceFirst("(\\[.+?\\]\\(.+?\\))|((?<=[^\\(])\\w+://\\w+?\\.\\w+?\\.\\w+)|((?<=[^\\(])\\w+://\\w+?\\.\\S+)",completeSyntax);
+                
+                tmpdata = tmpdata.replace(start,end,completeSyntax);
             }
 
 
-        }
+       // }
      
     }
     
     public String getHtml(){
+        html = tmpdata.toString();
         return html;
     }
     
@@ -327,7 +561,7 @@ class HeadingProcessor
             tag = String.format(tag, match.group(1).length());
             
             // Content Parser
-            content = new String[]{LittleInterpreter(match.group(2))};
+            content = new String[]{/*LittleInterpreter*/(match.group(2))};
             
            
 
@@ -478,7 +712,7 @@ class ListProcessor
                     unorderlist.add(true);
                 }
                 nodelist.add(x.split("\\+|\\-|\\*|\\d")[0].length()/4);
-                contentlist.add(LittleInterpreter(match.group(2)));
+                contentlist.add(/*LittleInterpreter*/(match.group(2)));
                 propertylist.add(String.join(" ", property_parser(match.group(3))));
             }
         }
@@ -598,7 +832,7 @@ class BlockQuoteProcessor
             if(match.find()){
             
                 nodelist.add(match.group(1).length());
-                contentlist.add(LittleInterpreter(match.group(2)));
+                contentlist.add(/*LittleInterpreter*/(match.group(2)));
                 propertylist.add(String.join(" ", property_parser(match.group(3))));
             }
         }
@@ -719,7 +953,7 @@ class TableProcessor
             }
             
             // Add Table Heading tags
-            htmltags.add(String.format("<th> %s </th>", LittleInterpreter(r)));
+            htmltags.add(String.format("<th> %s </th>", /*LittleInterpreter*/(r)));
         }
         htmltags.add("</tr>");
         
@@ -743,7 +977,7 @@ class TableProcessor
             if(dcell.equals("")){
                 continue;
             }
-            htmltags.add(String.format("<td> %s </td>", LittleInterpreter(dcell))); 
+            htmltags.add(String.format("<td> %s </td>", /*LittleInterpreter*/(dcell))); 
             
             }
 
@@ -836,8 +1070,8 @@ class ADMarkProcessor{
     */
     private void ProcessElement(String data){
         
-        // System.out.println(String.format("--%s--", data));
-        
+       // System.out.println(String.format("--%s--", data));
+
         /* Heading Expression */
         if (data.matches(HEADINGS_EXPRESSION)){
             output_html += process_heading(data);
@@ -883,7 +1117,7 @@ class ADMarkProcessor{
             
         }else {
             
-            output_html += String.format("<p> %s </p>\n",LittleInterpreter(data));
+            output_html += String.format("<p> %s </p>\n",/*LittleInterpreter*/(data));
         }
     }
     
@@ -910,11 +1144,11 @@ class ADMarkProcessor{
     
     */
     
-    private String LittleInterpreter(String data){
+    /*private String LittleInterpreter(String data){
         LittleInterPreter tmpobj = new LittleInterPreter(data);
         return tmpobj.getHtml();
         
-    }
+    }*/
     
     private String process_heading(String data){
         if(debug){
@@ -1059,7 +1293,7 @@ public class ADMark{
 	public String input_data; // Input Markdown Text
 	public String output_data; // Output HTML Source Code
     
-    //private LittleInterPreter processedtext = new LittleInterPreter();
+    private LittleInterPreter processedtext = new LittleInterPreter();
 
 	
     /* Constructor */
@@ -1067,8 +1301,12 @@ public class ADMark{
 
 		// Get Input
 		input_data = ReadFileData(input_file);
+
 		ADMarkProcessor obj = new ADMarkProcessor(input_data);
 		output_data = obj.getHTML(); 
+        processedtext.load(output_data);
+        output_data=processedtext.getHtml();
+        //System.out.println(output_data);
         
         //output_data = processedtext.processSyntax(output_data);
 		// Write Output
@@ -1078,8 +1316,11 @@ public class ADMark{
 
 	public String ADMark(String markdownContent){
 		input_data = markdownContent;
+        
 		ADMarkProcessor obj = new ADMarkProcessor(input_data);
 		output_data = obj.getHTML(); 
+         processedtext.load(output_data);
+        output_data=processedtext.getHtml();
         //output_data = processedtext.processSyntax(output_data);
 		// Write Output
 		WriteFileData(output_file, output_data);
