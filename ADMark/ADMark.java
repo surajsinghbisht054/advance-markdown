@@ -2,26 +2,29 @@ package ADMark;
 
 /*
 
-	Author
-			Suraj Singh Bisht
-			Surajsinghbisht054@gmail.com
-			www.bitforestinfo.com
-			www.blaregroup.com
+    Author
+            Suraj Singh Bisht
+            Surajsinghbisht054@gmail.com
+            www.bitforestinfo.com
+            www.blaregroup.com
+
+            Himanshu Sharma
+            himanshusharma2930@gmail.com
+            
+    ===============================================================
+                Advance MarkDown To HTML Generating Engine
+    ===============================================================
 
 
-	===============================================================
-				Advance MarkDown To HTML Generating Engine
-	===============================================================
-
-
-	Reference Docs:
-		https://docs.oracle.com/javase/7/docs/api/java/lang/String.html
-		https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
+    Reference Docs:
+        https://docs.oracle.com/javase/7/docs/api/java/lang/String.html
+        https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
         https://www.markdownguide.org/extended-syntax/
         https://daringfireball.net/projects/markdown/syntax#header
-		
+        
 
 */
+
 import java.lang.System;
 import java.io.*;
 import java.util.regex.*;
@@ -1306,6 +1309,7 @@ public class ADMark{
 		output_data = obj.getHTML(); 
         processedtext.load(output_data);
         output_data=processedtext.getHtml();
+        output_data= output_data+"\n"+"<script type=\"text/javascript\" src=\"https://cdn.statically.io/gh/blaregroup/HiliSyntax/master/js/HiliSyntax_Link.js\"></script>";
         //System.out.println(output_data);
         
         //output_data = processedtext.processSyntax(output_data);
@@ -1314,6 +1318,7 @@ public class ADMark{
 		WriteFileData(output_file, output_data);
 	}
 
+    //for prev on IDE
 	public String ADMark(String markdownContent){
 		input_data = markdownContent;
         
@@ -1321,6 +1326,7 @@ public class ADMark{
 		output_data = obj.getHTML(); 
          processedtext.load(output_data);
         output_data=processedtext.getHtml();
+        output_data= output_data+"\n"+"<script type=\"text/javascript\" src=\"https://cdn.statically.io/gh/blaregroup/HiliSyntax/master/js/HiliSyntax_Link.js\"></script>";
         //output_data = processedtext.processSyntax(output_data);
 		// Write Output
 		WriteFileData(output_file, output_data);

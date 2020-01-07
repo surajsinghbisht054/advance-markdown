@@ -59,11 +59,21 @@ function prevrun(){
 	# Path To Openjfx libx
 	export PATH_TO_FX=/usr/share/openjfx/lib
 	
-	# compile webview with openjfx
-	javac --module-path $PATH_TO_FX --add-modules=javafx.swing,javafx.web webview.java
+	# Compile All Script
+	javac ADMark/*.java
+	
+	# compile newwebview with openjfx
+	javac --module-path $PATH_TO_FX --add-modules=javafx.swing,javafx.web execute.java
+
+	
+	#javac execute.java
+
+	
 	
 	# To Run
-	java --module-path $PATH_TO_FX --add-modules=javafx.swing,javafx.web webview
+	# java --module-path $PATH_TO_FX --add-modules=javafx.swing,javafx.web newwebview
+	#java execute
+	java --module-path $PATH_TO_FX --add-modules=javafx.swing,javafx.web execute
 		
 }
 
